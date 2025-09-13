@@ -1,13 +1,18 @@
 services:
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.33.1
     container_name: portainer
-    restart: always
+    restart: unless-stopped
     ports:
-      - "9443:9443"  # HTTPS
+      - "9443:9443"   # HTTPS
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "https://localhost:9443/api/system/status", "--no-check-certificate"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
 
 volumes:
   portainer_data:
