@@ -1,0 +1,11 @@
+**/.env
+**/*.env
+**/secrets/*
+**/.DS_Store
+**/.idea
+**/.vscode
+
+**/*.tar
+**/*.tar.gz
+**/backup/**
+
