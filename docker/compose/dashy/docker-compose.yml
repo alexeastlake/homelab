@@ -1,9 +1,0 @@
-services:
-  dashy:
-    image: lissy93/dashy
-    container_name: dashy
-    volumes:
-      - ./conf:/app/user-data
-    ports:
-      - 8080:8080
-    restart: unless-stopped
