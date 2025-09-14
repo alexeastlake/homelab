@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # setup_srv_dirs.sh
-# Usage: sudo scripts/setup/setup_srv_dirs.sh
+# Usage: sudo setup/dirs/setup_srv_dirs.sh
 
 set -euo pipefail
 
