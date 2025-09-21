@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: sudo ./apply.sh [01-wifi.yaml]
+# Usage: sudo ./apply_netplan.sh [01-wifi.yaml]
 # Copies built file into /etc/netplan/ and applies it
 
 OUT_FILE="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/01-wifi.yaml}"

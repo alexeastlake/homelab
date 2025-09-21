@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usage: sudo ./build.sh [wifi.env] [wifi.yaml.tpl]
+# Usage: sudo ./build_netplan.sh [wifi.env] [wifi.yaml.tpl]
 
 set -euo pipefail
 
