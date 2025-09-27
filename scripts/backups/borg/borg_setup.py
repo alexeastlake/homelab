@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, tomllib, subprocess, pathlib
+import os, sys, tomllib, subprocess, pathlib, shutil
 
 def req(cfg, k):
     if k not in cfg: sys.exit(f"Missing config key: {k}")
