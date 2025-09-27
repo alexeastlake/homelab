@@ -1,0 +1,12 @@
+repo = "local:/srv/backup/borg"          # or ssh:borg@host:/path
+include_dirs = ["/srv/data"]
+exclude_patterns = []
+
+archive_prefix = "homelab"
+
+keep_daily   = 7
+keep_weekly  = 4
+keep_monthly = 6
+
+cron_minute = "30"
+cron_hour   = "2"
