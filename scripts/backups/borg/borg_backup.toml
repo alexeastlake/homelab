@@ -3,6 +3,7 @@ include_dirs = ["/srv/data"]
 exclude_patterns = []
 
 archive_prefix = "homelab"
+compression = "lz4"
 
 keep_daily   = 7
 keep_weekly  = 4

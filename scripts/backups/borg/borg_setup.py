@@ -19,6 +19,7 @@ cron_hr  = req(cfg,"cron_hour")
 print("Configuration:")
 for key, value in cfg.items():
     print(f"{key}: {value}")
+print()
 
 repo = repo_raw[6:] if repo_raw.startswith("local:") else repo_raw[4:] if repo_raw.startswith("ssh:") else repo_raw
 env  = {**os.environ, "BORG_REPO": repo}
