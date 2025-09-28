@@ -9,5 +9,6 @@ keep_daily   = 7
 keep_weekly  = 4
 keep_monthly = 6
 
-cron_minute = "30"
-cron_hour   = "2"
+# UTC
+cron_minute = "0"
+cron_hour   = "14"
