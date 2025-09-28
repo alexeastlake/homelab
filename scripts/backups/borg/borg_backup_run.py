@@ -36,10 +36,12 @@ create = ["borg","create","--compression",compression, repo+"::"+arch, *include_
 prune  = ["borg","prune","--list","-a",f"{archive_prefix}-{host}-*",
           "--keep-daily",keep_daily,"--keep-weekly",keep_weekly,"--keep-monthly",keep_monthly]
 
-create_result = subprocess.run(create, env=env)
-print(create_result)
+print(create)
+create_rc = subprocess.run(create, env=env).returncode
+print(create_rc)
 
-prune_result = subprocess.run(prune,  env=env)
-print(prune_result)
+print(prune)
+prune_rc = subprocess.run(prune,  env=env).returncode
+print(prune_rc)
 
-sys.exit(max(create_result.returncode, prune_result.returncode))
+sys.exit(max(create_rc, prune_rc))
