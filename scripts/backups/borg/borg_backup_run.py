@@ -33,7 +33,7 @@ excl = []
 for p in exclude_pats: excl += ["--exclude", p]
 
 create = ["borg","create","--compression",compression, repo+"::"+arch, *include_dirs, *excl]
-prune  = ["borg","prune","--list","--a",f"{archive_prefix}-{host}-*",
+prune  = ["borg","prune","--list","-a",f"{archive_prefix}-{host}-*",
           "--keep-daily",keep_daily,"--keep-weekly",keep_weekly,"--keep-monthly",keep_monthly]
 
 rc1 = subprocess.run(create, env=env).returncode
