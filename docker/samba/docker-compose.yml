@@ -3,10 +3,10 @@ services:
     image: dperson/samba:latest
     container_name: samba
     restart: unless-stopped
-
+    env_file:
+      - .env
     volumes:
       - /srv/data/samba-fileshare:/shares/files
-
     command: >
       -u "${SMB_USER};${SMB_PASS}"
       -s "samba-fileshare;/shares/files;yes;no;no"
