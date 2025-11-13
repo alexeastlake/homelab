@@ -41,7 +41,7 @@ cron_line = f"{cron_min} {cron_hr} * * * root {backup_script} >> /var/log/borg.l
 cron_contents = (
     "SHELL=/bin/bash\n"
     "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\n\n"
-    + cron_line
+    + cron_line # TODO: Fix this, this will be clearing out any other cron schedules depending when this is run
 )
 with open(cron_file, "w") as f: f.write(cron_contents)
 print(f"Cron job written: {cron_file}")
