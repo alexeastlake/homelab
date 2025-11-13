@@ -4,14 +4,9 @@ services:
     container_name: samba
     restart: unless-stopped
 
-    network_mode: host
-
     volumes:
       - /srv/data/samba-fileshare:/shares/files
 
-    environment:
-      - TZ=${TZ}
-
     command: >
       -u "${SMB_USER};${SMB_PASS}"
-      -s "files;/shares/files;yes;no;yes"
+      -s "samba-fileshare;/shares/files;yes;no;no"
