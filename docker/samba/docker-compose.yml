@@ -3,8 +3,12 @@ services:
     image: dperson/samba:latest
     container_name: samba
     restart: unless-stopped
+    environment:
+      TZ: '${TIMEZONE}'
     env_file:
       - .env
+    networks:
+      - default
     ports:
       - "137:137/udp"
       - "138:138/udp"
