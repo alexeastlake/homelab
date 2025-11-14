@@ -5,8 +5,15 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139/tcp"
+      - "445:445/tcp"
+    stdin_open: true
+    tty: true
     volumes:
       - /srv/data/samba-fileshare:/shares/files
     command: >
       -u "${SMB_USER};${SMB_PASS}"
-      -s "samba-fileshare;/shares/files;yes;no;no"
+      -s "samba-fileshare;/shares/files;yes;no;no;${SMB_USER}"
