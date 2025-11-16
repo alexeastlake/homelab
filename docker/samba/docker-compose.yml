@@ -1,23 +1,16 @@
 services:
   samba:
-    image: dperson/samba:latest
+    image: dockurr/samba:latest
     container_name: samba
     restart: unless-stopped
-    environment:
-      TZ: '${TIMEZONE}'
-    env_file:
-      - .env
-    networks:
-      - default
     ports:
-      - "137:137/udp"
-      - "138:138/udp"
-      - "139:139/tcp"
-      - "445:445/tcp"
-    stdin_open: true
-    tty: true
+      - "445:445"
+    environment:
+      NAME: "${SMB_NAME}"
+      USER: "${SMB_USER}"
+      PASS: "${SMB_PASS}"
+      UID: "${SMB_UID}"
+      GID: "${SMB_GID}"
+
     volumes:
-      - /srv/data/samba-fileshare:/shares/files
-    command: >
-      -u "${SMB_USER};${SMB_PASS}"
-      -s "samba-fileshare;/shares/files;yes;no;no;${SMB_USER}"
+      - /srv/data/smbshare:/storage
