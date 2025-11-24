@@ -1,0 +1,35 @@
+pageInfo:
+  title: dashy
+
+appConfig:
+  auth:
+    users:
+      - user: username_change_me
+        hash: SHA256_hash_password_change_me
+        type: admin
+
+sections:
+  - name: Monitoring
+    icon: fas fa-desktop
+    items:
+      - title: Dozzle
+        icon: fas fa-stream
+        url: http://server_change_me:8080
+
+  - name: Applications
+    icon: fas fa-th
+    items:
+      - title: Koillection
+        icon: fas fa-boxes-stacked
+        url: http://server_change_me:8090
+
+  - name: Access
+    icon: fas fa-terminal
+    items:
+      - title: Samba Fileshare
+        icon: fas fa-folder-open
+        url: smb://server_change_me/smbshare
+
+      - title: SSH to Server
+        icon: fas fa-terminal
+        url: ssh://server_user_change_me@server_change_me
