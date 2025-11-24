@@ -1,0 +1,1 @@
+Central repository for my homelab setup, scripts, and configuration

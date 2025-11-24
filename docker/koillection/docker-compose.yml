@@ -1,0 +1,26 @@
+services:
+  koillection:
+    image: koillection/koillection:latest
+    container_name: koillection
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - /srv/data/koillection/uploads:/uploads
+
+  db:
+    image: postgres:16
+    container_name: koillection-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - /srv/data/koillection/db:/var/lib/postgresql/data
