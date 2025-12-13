@@ -1,32 +1,16 @@
 services:
-  samba-general:
+  samba:
     image: dockurr/samba:latest
-    container_name: samba-general
+    container_name: samba
     restart: unless-stopped
     ports:
       - "445:445"
     environment:
-      NAME: "${SMB_NAME_GENERAL}"
-      USER: "${SMB_USER_GENERAL}"
-      PASS: "${SMB_PASS_GENERAL}"
-      UID: "${SMB_UID_GENERAL}"
-      GID: "${SMB_GID_GENERAL}"
+      NAME: "${SMB_NAME}"
+      USER: "${SMB_USER}"
+      PASS: "${SMB_PASS}"
+      UID: "${SMB_UID}"
+      GID: "${SMB_GID}"
 
     volumes:
-      - /srv/data/smbsharegeneral:/storage
-
-  samba-private:
-      image: dockurr/samba:latest
-      container_name: samba-private
-      restart: unless-stopped
-      ports:
-        - "445:445"
-      environment:
-        NAME: "${SMB_NAME_PRIVATE}"
-        USER: "${SMB_USER_PRIVATE}"
-        PASS: "${SMB_PASS_PRIVATE}"
-        UID: "${SMB_UID_PRIVATE}"
-        GID: "${SMB_GID_PRIVATE}"
-
-      volumes:
-        - /srv/data/smbshareprivate:/storage
+      - /srv/data/smbshare:/storage
