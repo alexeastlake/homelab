@@ -5,7 +5,7 @@ def req(cfg, k):
     if k not in cfg: sys.exit(f"Missing config key: {k}")
     return cfg[k]
 
-# --- Check that borg is installed ---
+# Check that borg is installed
 if not shutil.which("borg"):
     sys.exit("Error: borgbackup is not installed.")
 
