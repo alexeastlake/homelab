@@ -1,4 +1,4 @@
-repo = "local:/srv/backup/borg"          # or ssh:borg@host:/path
+repo = "local:/srv/backup/borg" # or ssh:borg@host:/path
 include_dirs = ["/srv/data"]
 exclude_patterns = []
 

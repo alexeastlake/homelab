@@ -10,3 +10,7 @@
 **/backup/**
 
 **/*wifi.yaml
+**/*wifi.yml
+
+**/conf.yaml
+**/conf.yml
