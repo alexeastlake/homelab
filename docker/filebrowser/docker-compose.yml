@@ -1,0 +1,13 @@
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    volumes:
+      # Files to manage
+      - /srv/data/storage:/srv
+      # Persistent database and config
+      - /srv/data/filebrowser/database:/database
+      - /srv/data/filebrowser/config:/config
+    ports:
+      - "8084:80"
+    restart: unless-stopped

@@ -11,6 +11,5 @@ services:
       PASS: "${SMB_PASS}"
       UID: "${SMB_UID}"
       GID: "${SMB_GID}"
-
     volumes:
-      - /srv/data/smbshare:/storage
+      - /srv/data/storage:/storage
