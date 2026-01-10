@@ -1,5 +1,5 @@
 adventurelog.alexserver.home.arpa {
-    reverse_proxy adventurelog-frontend:8080
+    reverse_proxy adventurelog-frontend:3000
 }
 
 dashy.alexserver.home.arpa {
@@ -19,5 +19,5 @@ grampsweb.alexserver.home.arpa {
 }
 
 koillection.alexserver.home.arpa {
-    reverse_proxy koillection:5000
+    reverse_proxy koillection:80
 }
