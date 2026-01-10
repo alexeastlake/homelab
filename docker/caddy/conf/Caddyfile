@@ -1,0 +1,3 @@
+dozzle.alexserver.home.arpa {
+    reverse_proxy localhost:8080
+}
