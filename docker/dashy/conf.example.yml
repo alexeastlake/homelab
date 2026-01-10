@@ -15,10 +15,10 @@ sections:
     items:
       - title: Dozzle
         icon: fas fa-server
-        url: http://server_change_me:8080
+        url: http://change_me
   - name: Applications
     icon: fas fa-th
     items:
       - title: Koillection
         icon: fas fa-box-open
-        url: http://server_change_me:8090
+        url: http://change_me

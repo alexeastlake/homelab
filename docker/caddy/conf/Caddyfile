@@ -1,3 +1,23 @@
+adventurelog.alexserver.home.arpa {
+    reverse_proxy adventurelog-frontend:8080
+}
+
+dashy.alexserver.home.arpa {
+    reverse_proxy dashy:8080
+}
+
 dozzle.alexserver.home.arpa {
     reverse_proxy dozzle:8080
+}
+
+filebrowser.alexserver.home.arpa {
+    reverse_proxy filebrowser:80
+}
+
+grampsweb.alexserver.home.arpa {
+    reverse_proxy grampsweb:5000
+}
+
+koillection.alexserver.home.arpa {
+    reverse_proxy koillection:5000
 }

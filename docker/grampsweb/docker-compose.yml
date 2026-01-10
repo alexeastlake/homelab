@@ -1,9 +1,13 @@
 services:
   grampsweb: &grampsweb
     image: ghcr.io/gramps-project/grampsweb:latest
+    container_name: grampsweb
     restart: unless-stopped
-    ports:
-      - "8085:5000"
+    # ports:
+    #   - "8080:5000"
+    networks:
+      - proxy
+      - grampsweb-internal
     environment:
       GRAMPSWEB_TREE: "Gramps Web"  # will create a new tree if not exists
       GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://grampsweb_redis:6379/0"
@@ -24,6 +28,8 @@ services:
   grampsweb_celery:
     <<: *grampsweb  # YAML merge key copying the entire grampsweb service config
     ports: []
+    networks:
+      - grampsweb-internal
     container_name: grampsweb_celery
     depends_on:
       - grampsweb
@@ -33,4 +39,12 @@ services:
   grampsweb_redis:
     image: docker.io/library/redis:7.2.4-alpine
     container_name: grampsweb_redis
+    networks:
+      - grampsweb-internal
     restart: unless-stopped
+
+networks:
+  proxy:
+    external: true
+  grampsweb-internal:
+    driver: bridge

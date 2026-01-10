@@ -3,8 +3,11 @@ services:
     image: koillection/koillection:latest
     container_name: koillection
     restart: unless-stopped
-    ports:
-      - "8090:80"
+    # ports:
+    #  - "8080:80"
+    networks:
+      - proxy
+      - koillection-internal
     env_file:
       - .env
     depends_on:
@@ -16,6 +19,8 @@ services:
     image: postgres:16
     container_name: koillection-db
     restart: unless-stopped
+    networks:
+      - koillection-internal
     env_file:
       - .env
     environment:
@@ -24,3 +29,9 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
       - /srv/data/koillection/db:/var/lib/postgresql/data
+
+networks:
+  proxy:
+    external: true
+  koillection-internal:
+    driver: bridge
