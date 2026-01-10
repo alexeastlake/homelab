@@ -4,6 +4,8 @@ services:
     container_name: dozzle
     ports:
       - "8080:8080"
+    networks:
+      - proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     read_only: true
