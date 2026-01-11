@@ -22,6 +22,10 @@ koillection.alexserver.home.arpa {
     reverse_proxy koillection:80
 }
 
+portainer.alexserver.home.arpa {
+    reverse_proxy portainer:9443
+}
+
 uptime-kuma.alexserver.home.arpa {
     reverse_proxy uptime-kuma:80
 }
