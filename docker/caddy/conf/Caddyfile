@@ -21,3 +21,7 @@ grampsweb.alexserver.home.arpa {
 koillection.alexserver.home.arpa {
     reverse_proxy koillection:80
 }
+
+uptime-kuma.alexserver.home.arpa {
+    reverse_proxy uptime-kuma:80
+}
