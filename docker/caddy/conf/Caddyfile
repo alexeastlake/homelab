@@ -2,6 +2,10 @@ adventurelog.alexserver.home.arpa {
     reverse_proxy adventurelog-frontend:3000
 }
 
+adguard.alexserver.home.arpa {
+    reverse_proxy adguard:3000
+}
+
 dashy.alexserver.home.arpa {
     reverse_proxy dashy:8080
 }
