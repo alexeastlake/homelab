@@ -26,6 +26,10 @@ koillection.alexserver.home.arpa {
     reverse_proxy koillection:80
 }
 
+open-webui.alexserver.home.arpa {
+    reverse_proxy open-webui:8080
+}
+
 portainer.alexserver.home.arpa {
     reverse_proxy portainer:9000
 }
