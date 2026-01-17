@@ -1,0 +1,29 @@
+- Apps:
+    - AdventureLog:
+        href: https://adventurelog.alexserver.home.arpa
+
+    - Koillection:
+        href: https://koillection.alexserver.home.arpa
+
+    - FileBrowser:
+        href: https://filebrowser.alexserver.home.arpa
+
+    - Gramps Web:
+        href: https://grampsweb.alexserver.home.arpa
+
+    - Open WebUI:
+        href: https://open-webui.alexserver.home.arpa
+
+- Admin:
+    - Portainer:
+        href: https://portainer.alexserver.home.arpa
+
+    - AdGuard:
+        href: https://adguard.alexserver.home.arpa
+
+- Monitoring:
+    - Uptime Kuma:
+        href: https://uptime-kuma.alexserver.home.arpa
+        
+    - Dozzle:
+        href: https://dozzle.alexserver.home.arpa

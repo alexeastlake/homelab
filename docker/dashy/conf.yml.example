@@ -8,7 +8,7 @@ appConfig:
         type: admin
   theme: minimal-dark
   layout: auto
-  iconSize: medium
+  iconSize: large
 sections:
   - name: Management
     icon: fas fa-server

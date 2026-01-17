@@ -22,6 +22,10 @@ grampsweb.alexserver.home.arpa {
     reverse_proxy grampsweb:5000
 }
 
+homepage.alexserver.home.arpa {
+    reverse_proxy homepage:3000
+}
+
 koillection.alexserver.home.arpa {
     reverse_proxy koillection:80
 }
