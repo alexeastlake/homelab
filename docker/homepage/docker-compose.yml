@@ -5,7 +5,7 @@ services:
     # ports:
     #   - 3000:3000
     volumes:
-      - /srv/data/homepage/config
+      - /srv/data/homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
     environment:
       HOMEPAGE_ALLOWED_HOSTS: homepage.alexserver.home.arpa
