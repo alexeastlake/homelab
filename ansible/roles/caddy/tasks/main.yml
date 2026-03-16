@@ -1,0 +1,13 @@
+---
+- name: Ensure Caddy config directory exists
+  ansible.builtin.file:
+    path: "{{ docker_compose_dir }}/caddy/conf"
+    state: directory
+    mode: "0755"
+
+- name: Template Caddyfile
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: "{{ docker_compose_dir }}/caddy/conf/Caddyfile"
+    mode: "0644"
+  notify: reload caddy

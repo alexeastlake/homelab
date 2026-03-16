@@ -6,10 +6,6 @@ adguard.alexserver.home.arpa {
     reverse_proxy adguard:3000
 }
 
-dashy.alexserver.home.arpa {
-    reverse_proxy dashy:8080
-}
-
 dozzle.alexserver.home.arpa {
     reverse_proxy dozzle:8080
 }

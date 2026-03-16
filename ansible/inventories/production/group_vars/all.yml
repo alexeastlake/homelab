@@ -1,0 +1,85 @@
+---
+# General
+timezone: Pacific/Auckland
+deploy_user: root
+deploy_group: root
+
+# Domain
+domain: alexserver.home.arpa
+
+# Repo sync path on target
+homelab_repo_path: /opt/homelab
+docker_compose_dir: "{{ homelab_repo_path }}/docker"
+
+# Docker stacks to deploy (order matters -- infra first)
+enabled_stacks:
+  - caddy
+  - cloudflared
+  - adguard
+  - adventurelog
+  - grampsweb
+  - koillection
+  - portainer
+  - dozzle
+  - uptime-kuma
+  - homepage
+  - filebrowser
+  - samba
+  # Excluded on current hardware:
+  # - ollama
+  # - open-webui
+
+# Stacks that require a templated .env file
+stacks_with_env:
+  - adventurelog
+  - cloudflared
+  - koillection
+  - samba
+
+# Stacks that require templated config files
+stacks_with_config:
+  - homepage
+
+# Caddy reverse proxy sites
+caddy_sites:
+  - { hostname: adventurelog, upstream: "adventurelog-frontend:3000" }
+  - { hostname: adguard, upstream: "adguard:3000" }
+  - { hostname: dozzle, upstream: "dozzle:8080" }
+  - { hostname: filebrowser, upstream: "filebrowser:80" }
+  - { hostname: grampsweb, upstream: "grampsweb:5000" }
+  - { hostname: homepage, upstream: "homepage:3000" }
+  - { hostname: koillection, upstream: "koillection:80" }
+  - { hostname: portainer, upstream: "portainer:9000" }
+  - { hostname: uptime-kuma, upstream: "uptime-kuma:3001" }
+
+# BorgBackup
+borg_repo: /srv/backup/borg
+borg_source_dirs:
+  - /srv/data
+borg_archive_prefix: homelab
+borg_compression: lz4
+borg_keep_daily: 7
+borg_keep_weekly: 4
+borg_keep_monthly: 6
+borg_cron_hour: "14"
+borg_cron_minute: "0"
+
+# Secrets (referenced from vault.yml)
+cloudflared_tunnel_token: "{{ vault_cloudflared_tunnel_token }}"
+
+adventurelog_origin: "{{ vault_adventurelog_origin }}"
+adventurelog_db_user: "{{ vault_adventurelog_db_user }}"
+adventurelog_db_password: "{{ vault_adventurelog_db_password }}"
+adventurelog_secret_key: "{{ vault_adventurelog_secret_key }}"
+adventurelog_admin_user: "{{ vault_adventurelog_admin_user }}"
+adventurelog_admin_password: "{{ vault_adventurelog_admin_password }}"
+adventurelog_admin_email: "{{ vault_adventurelog_admin_email }}"
+adventurelog_public_url: "{{ vault_adventurelog_public_url }}"
+adventurelog_csrf_origins: "{{ vault_adventurelog_csrf_origins }}"
+adventurelog_frontend_url: "{{ vault_adventurelog_frontend_url }}"
+
+koillection_db_password: "{{ vault_koillection_db_password }}"
+
+samba_name: "{{ vault_samba_name }}"
+samba_user: "{{ vault_samba_user }}"
+samba_password: "{{ vault_samba_password }}"

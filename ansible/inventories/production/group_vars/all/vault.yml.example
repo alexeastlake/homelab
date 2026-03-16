@@ -1,0 +1,28 @@
+---
+# Copy this file to vault.yml and fill in real values, then encrypt:
+#   cp vault.yml.example vault.yml
+#   # edit vault.yml with real values
+#   ansible-vault encrypt vault.yml
+
+# Cloudflare tunnel
+vault_cloudflared_tunnel_token: "your-tunnel-token"
+
+# AdventureLog
+vault_adventurelog_origin: "https://adventurelog.alexserver.home.arpa"
+vault_adventurelog_db_user: "adventure"
+vault_adventurelog_db_password: "change-me"
+vault_adventurelog_secret_key: "change-me"
+vault_adventurelog_admin_user: "admin"
+vault_adventurelog_admin_password: "change-me"
+vault_adventurelog_admin_email: "admin@example.com"
+vault_adventurelog_public_url: "http://localhost:8016"
+vault_adventurelog_csrf_origins: "http://localhost:8016,http://localhost:8015,https://adventurelog.alexserver.home.arpa"
+vault_adventurelog_frontend_url: "http://localhost:8015"
+
+# Koillection
+vault_koillection_db_password: "change-me"
+
+# Samba
+vault_samba_name: "smbshare"
+vault_samba_user: "change-me"
+vault_samba_password: "change-me"

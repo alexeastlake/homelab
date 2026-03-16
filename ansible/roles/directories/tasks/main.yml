@@ -1,0 +1,13 @@
+---
+- name: Create base directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  loop:
+    - { path: /srv/data, mode: "0750", owner: "{{ deploy_user }}", group: "{{ deploy_group }}" }
+    - { path: /srv/secrets, mode: "0700", owner: root, group: root }
+    - { path: /srv/backup, mode: "0750", owner: "{{ deploy_user }}", group: "{{ deploy_group }}" }
+    - { path: /srv/backup/borg, mode: "0750", owner: "{{ deploy_user }}", group: "{{ deploy_group }}" }

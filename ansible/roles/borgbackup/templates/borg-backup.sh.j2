@@ -1,0 +1,31 @@
+#!/bin/bash
+set -euo pipefail
+
+export BORG_REPO="{{ borg_repo }}"
+
+HOSTNAME=$(hostname -s)
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M)
+ARCHIVE="{{ borg_archive_prefix }}-${HOSTNAME}-${TIMESTAMP}"
+
+echo "=== Borg backup started: $(date) ==="
+
+# Create archive
+borg create \
+    --compression {{ borg_compression }} \
+    "${BORG_REPO}::${ARCHIVE}" \
+{% for dir in borg_source_dirs %}
+    {{ dir }}{{ ' \\' if not loop.last else '' }}
+{% endfor %}
+
+
+echo "Archive created: ${ARCHIVE}"
+
+# Prune old archives
+borg prune \
+    --list \
+    --glob-archives "{{ borg_archive_prefix }}-${HOSTNAME}-*" \
+    --keep-daily {{ borg_keep_daily }} \
+    --keep-weekly {{ borg_keep_weekly }} \
+    --keep-monthly {{ borg_keep_monthly }}
+
+echo "=== Borg backup completed: $(date) ==="

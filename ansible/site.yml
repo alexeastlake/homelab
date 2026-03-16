@@ -1,0 +1,13 @@
+---
+- name: Provision homelab Docker host
+  hosts: homelab
+  become: true
+
+  roles:
+    - common
+    - docker
+    - directories
+    - docker_network
+    - caddy
+    - stacks
+    - borgbackup

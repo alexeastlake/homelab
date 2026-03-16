@@ -1,0 +1,7 @@
+---
+- name: Deploy Docker stacks
+  hosts: homelab
+  become: true
+
+  roles:
+    - stacks

@@ -1,0 +1,8 @@
+{% for site in caddy_sites %}
+{{ site.hostname }}.{{ domain }} {
+    reverse_proxy {{ site.upstream }}
+}
+{% if not loop.last %}
+
+{% endif %}
+{% endfor %}
