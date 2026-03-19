@@ -22,7 +22,7 @@ resource "proxmox_virtual_environment_container" "docker_host" {
     keyctl  = true # required for Docker inside LXC
   }
 
-  unprivileged = false # privileged LXC for full Docker compatibility
+  unprivileged = true # unprivileged is more secure; nesting+keyctl is enough for Docker
 
   disk {
     datastore_id = var.storage

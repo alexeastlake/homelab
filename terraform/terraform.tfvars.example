@@ -1,16 +1,17 @@
-proxmox_api_url   = "https://192.168.68.XX:8006"
-proxmox_api_token = "root@pam!terraform=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+proxmox_api_url   = "https://192.168.68.XX:8006/"
+proxmox_username  = "root@pam"
+proxmox_password  = "your-proxmox-root-password"
 proxmox_node      = "pve"
 
-lxc_template = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+lxc_template = "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
 lxc_cores    = 4
-lxc_memory_mb = 5120
+lxc_memory_mb = 4096
 lxc_swap_mb  = 1024
-disk_gb      = 200
+disk_gb      = 45
 storage      = "local-lvm"
 
-lxc_ip       = "192.168.68.10/24"
-gateway      = "192.168.68.1"
+lxc_ip       = "10.10.10.10/24"
+gateway      = "10.10.10.1"
 dns_servers  = ["1.1.1.1", "8.8.8.8"]
 
 ssh_public_key = "ssh-ed25519 AAAA... user@host"

@@ -3,8 +3,14 @@ variable "proxmox_api_url" {
   type        = string
 }
 
-variable "proxmox_api_token" {
-  description = "Proxmox API token (e.g. user@pam!terraform=UUID)"
+variable "proxmox_username" {
+  description = "Proxmox username (e.g. root@pam)"
+  type        = string
+  default     = "root@pam"
+}
+
+variable "proxmox_password" {
+  description = "Proxmox root password"
   type        = string
   sensitive   = true
 }
@@ -18,7 +24,7 @@ variable "proxmox_node" {
 variable "lxc_template" {
   description = "LXC template file ID (e.g. local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst)"
   type        = string
-  default     = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+  default     = "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
 }
 
 variable "lxc_cores" {

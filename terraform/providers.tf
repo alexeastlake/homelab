@@ -11,6 +11,7 @@ terraform {
 
 provider "proxmox" {
   endpoint = var.proxmox_api_url
-  api_token = var.proxmox_api_token
+  username = var.proxmox_username
+  password = var.proxmox_password
   insecure = true # self-signed certs on homelab
 }
