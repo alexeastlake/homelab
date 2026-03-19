@@ -8,17 +8,11 @@
   ansible.builtin.apt:
     name:
       - curl
-      - wget
-      - git
       - htop
-      - borgbackup
       - python3
-      - python3-pip
       - unattended-upgrades
-      - apt-transport-https
       - ca-certificates
       - gnupg
-      - lsb-release
     state: present
 
 - name: Set timezone

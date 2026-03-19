@@ -1,13 +1,5 @@
 ---
-- name: Clone/update homelab repo on target
-  ansible.builtin.git:
-    repo: "{{ homelab_git_repo | default('https://github.com/your-user/homelab.git') }}"
-    dest: "{{ homelab_repo_path }}"
-    version: "{{ homelab_git_branch | default('main') }}"
-    force: true
-  when: homelab_git_repo is defined
-
-- name: Sync docker compose files to target (when not using git)
+- name: Sync docker compose files to target
   ansible.builtin.synchronize:
     src: "{{ playbook_dir }}/../docker/"
     dest: "{{ docker_compose_dir }}/"
@@ -16,7 +8,6 @@
       - "--exclude=.env"
       - "--exclude=conf.yml"
       - "--exclude=conf.yaml"
-  when: homelab_git_repo is not defined
 
 - name: Deploy enabled stacks
   ansible.builtin.include_tasks: deploy_stack.yml

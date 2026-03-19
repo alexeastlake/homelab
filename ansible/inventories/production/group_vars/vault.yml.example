@@ -5,13 +5,13 @@
 #   ansible-vault encrypt vault.yml
 
 # Cloudflare tunnel
-vault_cloudflared_tunnel_token: "your-tunnel-token"
+vault_cloudflared_tunnel_token: "change-me"
 
 # AdventureLog
 vault_adventurelog_origin: "https://adventurelog.alexserver.home.arpa"
 vault_adventurelog_db_user: "adventure"
 vault_adventurelog_db_password: "change-me"
-vault_adventurelog_secret_key: "change-me"
+vault_adventurelog_django_secret_key: "change-me"
 vault_adventurelog_admin_user: "admin"
 vault_adventurelog_admin_password: "change-me"
 vault_adventurelog_admin_email: "admin@example.com"
