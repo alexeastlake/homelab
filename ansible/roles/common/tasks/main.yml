@@ -9,6 +9,7 @@
     name:
       - curl
       - htop
+      - rsync
       - python3
       - unattended-upgrades
       - ca-certificates

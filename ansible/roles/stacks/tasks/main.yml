@@ -1,9 +1,10 @@
 ---
 - name: Sync docker compose files to target
-  ansible.builtin.synchronize:
+  ansible.posix.synchronize:
     src: "{{ playbook_dir }}/../docker/"
     dest: "{{ docker_compose_dir }}/"
     delete: false
+    rsync_path: rsync
     rsync_opts:
       - "--exclude=.env"
       - "--exclude=conf.yml"
