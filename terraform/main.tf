@@ -35,6 +35,8 @@ resource "proxmox_virtual_environment_container" "docker_host" {
   }
 
   initialization {
+    hostname = "docker-host"
+
     ip_config {
       ipv4 {
         address = var.lxc_ip
@@ -92,6 +94,8 @@ resource "proxmox_virtual_environment_container" "tunnel" {
   }
 
   initialization {
+    hostname = "tunnel"
+
     ip_config {
       ipv4 {
         address = var.tunnel_lxc_ip
