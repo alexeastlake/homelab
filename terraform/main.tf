@@ -73,11 +73,11 @@ resource "proxmox_virtual_environment_container" "tunnel" {
   }
 
   cpu {
-    cores = 1
+    cores = 2
   }
 
   memory {
-    dedicated = 256
+    dedicated = 512
     swap      = 256
   }
 
