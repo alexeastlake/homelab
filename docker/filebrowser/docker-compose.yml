@@ -12,6 +12,7 @@ services:
     #   - "8080:80"
     networks:
       - proxy
+    user: "0:0"
     restart: unless-stopped
 
 networks:
