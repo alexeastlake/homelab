@@ -1,3 +1,4 @@
+# --- Proxmox ---
 proxmox_api_url   = "https://192.168.68.XX:8006/"
 proxmox_username  = "root@pam"
 proxmox_password  = "your-proxmox-root-password"
@@ -15,3 +16,12 @@ gateway      = "10.10.10.1"
 dns_servers  = ["1.1.1.1", "8.8.8.8"]
 
 ssh_public_key = "ssh-ed25519 AAAA... user@host"
+
+# --- Cloudflare ---
+cloudflare_api_token  = "your-cloudflare-api-token"
+cloudflare_account_id = "your-cloudflare-account-id"
+cloudflare_user_email = "your-email@example.com"
+tunnel_name           = "homelab"
+
+# --- Tunnel LXC ---
+tunnel_lxc_ip = "10.10.10.20/24"

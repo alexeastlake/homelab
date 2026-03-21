@@ -57,3 +57,60 @@ resource "proxmox_virtual_environment_container" "docker_host" {
 
   start_on_boot = true
 }
+
+# --- Cloudflare Tunnel LXC ---
+
+resource "proxmox_virtual_environment_container" "tunnel" {
+  node_name   = var.proxmox_node
+  description = "Cloudflare tunnel connector"
+  tags        = ["homelab", "tunnel"]
+
+  operating_system {
+    template_file_id = var.lxc_template
+    type             = "debian"
+  }
+
+  cpu {
+    cores = 1
+  }
+
+  memory {
+    dedicated = 256
+    swap      = 256
+  }
+
+  unprivileged = true
+
+  disk {
+    datastore_id = var.storage
+    size         = 2
+  }
+
+  network_interface {
+    name   = "eth0"
+    bridge = "vmbr0"
+  }
+
+  initialization {
+    ip_config {
+      ipv4 {
+        address = var.tunnel_lxc_ip
+        gateway = var.gateway
+      }
+    }
+
+    dns {
+      servers = var.dns_servers
+    }
+
+    user_account {
+      keys = [var.ssh_public_key]
+    }
+  }
+
+  startup {
+    order = 0 # start before docker host
+  }
+
+  start_on_boot = true
+}

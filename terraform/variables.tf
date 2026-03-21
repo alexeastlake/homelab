@@ -77,3 +77,35 @@ variable "ssh_public_key" {
   description = "SSH public key for root access to the LXC"
   type        = string
 }
+
+# --- Cloudflare ---
+
+variable "cloudflare_api_token" {
+  description = "Cloudflare API token with Zero Trust permissions"
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_account_id" {
+  description = "Cloudflare account ID"
+  type        = string
+}
+
+variable "cloudflare_user_email" {
+  description = "Email for WARP device profile match rule"
+  type        = string
+}
+
+variable "tunnel_name" {
+  description = "Name of the Cloudflare tunnel"
+  type        = string
+  default     = "homelab"
+}
+
+# --- Tunnel LXC ---
+
+variable "tunnel_lxc_ip" {
+  description = "Static IP for the tunnel LXC in CIDR notation"
+  type        = string
+  default     = "10.10.10.20/24"
+}
