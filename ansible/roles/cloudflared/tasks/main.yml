@@ -1,0 +1,29 @@
+---
+- name: Add Cloudflare GPG key
+  ansible.builtin.apt_key:
+    url: https://pkg.cloudflare.com/cloudflare-main.gpg
+    state: present
+
+- name: Add Cloudflare apt repo
+  ansible.builtin.apt_repository:
+    repo: "deb https://pkg.cloudflare.com/cloudflared bookworm main"
+    state: present
+    filename: cloudflared
+
+- name: Install cloudflared
+  ansible.builtin.apt:
+    name: cloudflared
+    state: present
+    update_cache: true
+
+- name: Install cloudflared as a service
+  ansible.builtin.command:
+    cmd: "cloudflared service install {{ cloudflared_tunnel_token }}"
+    creates: /etc/systemd/system/cloudflared.service
+  notify: restart cloudflared
+
+- name: Ensure cloudflared is enabled and running
+  ansible.builtin.systemd:
+    name: cloudflared
+    state: started
+    enabled: true

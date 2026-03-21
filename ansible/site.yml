@@ -11,3 +11,11 @@
     - caddy
     - stacks
     - borgbackup
+
+- name: Provision Cloudflare tunnel
+  hosts: tunnel
+  become: true
+
+  roles:
+    - common
+    - cloudflared

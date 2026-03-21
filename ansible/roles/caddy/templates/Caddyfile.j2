@@ -1,6 +1,14 @@
 {% for site in caddy_sites %}
 {{ site.hostname }}.{{ domain }} {
+{% if site.tls_upstream | default(false) %}
+    reverse_proxy https://{{ site.upstream }} {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+{% else %}
     reverse_proxy {{ site.upstream }}
+{% endif %}
 }
 {% if not loop.last %}
 

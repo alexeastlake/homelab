@@ -4,7 +4,7 @@
 #   # edit vault.yml with real values
 #   ansible-vault encrypt vault.yml
 
-# Cloudflare tunnel
+# Cloudflare tunnel (get token from: terraform output -raw tunnel_token)
 vault_cloudflared_tunnel_token: "change-me"
 
 # AdventureLog

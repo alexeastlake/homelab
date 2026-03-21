@@ -14,7 +14,6 @@ docker_compose_dir: "{{ homelab_repo_path }}/docker"
 # Docker stacks to deploy (order matters -- infra first)
 enabled_stacks:
   - caddy
-  - cloudflared
   - adguard
   - adventurelog
   - grampsweb
@@ -32,7 +31,6 @@ enabled_stacks:
 # Stacks that require a templated .env file
 stacks_with_env:
   - adventurelog
-  - cloudflared
   - koillection
   - samba
 
@@ -51,6 +49,7 @@ caddy_sites:
   - { hostname: koillection, upstream: "koillection:80" }
   - { hostname: portainer, upstream: "portainer:9000" }
   - { hostname: uptime-kuma, upstream: "uptime-kuma:3001" }
+  - { hostname: pve, upstream: "10.10.10.1:8006", tls_upstream: true }
 
 # BorgBackup
 borg_repo: /srv/backup/borg
@@ -65,7 +64,7 @@ borg_cron_hour: "14"
 borg_cron_minute: "0"
 
 # Secrets (referenced from vault.yml)
-cloudflared_tunnel_token: "{{ vault_cloudflared_tunnel_token }}"
+cloudflared_tunnel_token: "{{ vault_cloudflared_tunnel_token }}"  # used by tunnel LXC role
 
 adventurelog_origin: "{{ vault_adventurelog_origin }}"
 adventurelog_db_user: "{{ vault_adventurelog_db_user }}"
