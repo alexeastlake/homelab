@@ -4,6 +4,7 @@ proxmox_username  = "root@pam"
 proxmox_password  = "your-proxmox-root-password"
 proxmox_node      = "pve"
 
+# --- Docker Host LXC ---
 lxc_template = "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
 lxc_cores    = 4
 lxc_memory_mb = 4096
