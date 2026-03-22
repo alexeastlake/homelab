@@ -1,7 +1,7 @@
 ---
 - name: Sync docker compose files to target
   ansible.posix.synchronize:
-    src: "{{ playbook_dir }}/../docker/"
+    src: "{{ role_path }}/../../../docker/"
     dest: "{{ docker_compose_dir }}/"
     delete: false
     rsync_path: rsync
