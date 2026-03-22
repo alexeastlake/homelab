@@ -31,6 +31,7 @@ enabled_stacks:
 # Stacks that require a templated .env file
 stacks_with_env:
   - adventurelog
+  - homepage
   - koillection
   - samba
 
@@ -59,6 +60,11 @@ adguard_admin_password_hash: "{{ vault_adguard_admin_password_hash }}"
 adguard_dns_rewrites:
   - { domain: "*.alexserver.home.arpa", answer: "10.10.10.10" }
   - { domain: "alexserver.home.arpa", answer: "10.10.10.10" }
+
+# Homepage widget secrets
+proxmox_api_token_id: "{{ vault_proxmox_api_token_id }}"
+proxmox_api_token_secret: "{{ vault_proxmox_api_token_secret }}"
+portainer_api_key: "{{ vault_portainer_api_key }}"
 
 # BorgBackup
 borg_repo: /srv/backup/borg

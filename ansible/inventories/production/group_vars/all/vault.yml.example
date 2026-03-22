@@ -22,6 +22,11 @@ vault_adventurelog_frontend_url: "http://localhost:8015"
 # Koillection
 vault_koillection_db_password: "change-me"
 
+# Homepage widgets
+vault_proxmox_api_token_id: "root@pam!homepage"
+vault_proxmox_api_token_secret: "change-me"
+vault_portainer_api_key: "change-me"
+
 # AdGuard Home
 # Password hash
 vault_adguard_admin_user: "admin"
