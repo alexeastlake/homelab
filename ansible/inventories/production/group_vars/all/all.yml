@@ -55,6 +55,7 @@ caddy_sites:
 
 # AdGuard Home
 adguard_admin_user: "{{ vault_adguard_admin_user }}"
+adguard_admin_password: "{{ vault_adguard_admin_password }}"
 adguard_admin_password_hash: "{{ vault_adguard_admin_password_hash }}"
 
 adguard_dns_rewrites:

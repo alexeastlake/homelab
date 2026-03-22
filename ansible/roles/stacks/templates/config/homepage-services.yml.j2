@@ -26,7 +26,7 @@
         description: Docker container management
         widget:
           type: portainer
-          url: https://portainer.{{ domain }}
+          url: http://portainer:9000
           env: 1
           key: {% raw %}{{HOMEPAGE_VAR_PORTAINER_KEY}}{% endraw %}
 
@@ -37,6 +37,8 @@
         widget:
           type: adguard
           url: http://adguard:3000
+          username: {{ adguard_admin_user }}
+          password: {{ adguard_admin_password }}
 
     - Proxmox:
         icon: si-proxmox
@@ -48,6 +50,7 @@
           username: {{ proxmox_api_token_id }}
           password: {{ proxmox_api_token_secret }}
           node: pve
+          insecure: true
 
 - Monitoring:
     - Uptime Kuma:
