@@ -50,6 +50,7 @@ caddy_sites:
   - { hostname: koillection, upstream: "koillection:80" }
   - { hostname: portainer, upstream: "portainer:9000" }
   - { hostname: uptime-kuma, upstream: "uptime-kuma:3001" }
+  - { hostname: pve, upstream: "10.10.10.1:8006", tls_upstream: true }
 
 # AdGuard Home
 adguard_admin_user: "{{ vault_adguard_admin_user }}"
@@ -58,7 +59,6 @@ adguard_admin_password_hash: "{{ vault_adguard_admin_password_hash }}"
 adguard_dns_rewrites:
   - { domain: "*.alexserver.home.arpa", answer: "10.10.10.10" }
   - { domain: "alexserver.home.arpa", answer: "10.10.10.10" }
-  - { domain: "pve.alexserver.home.arpa", answer: "10.10.10.1" }
 
 # BorgBackup
 borg_repo: /srv/backup/borg
