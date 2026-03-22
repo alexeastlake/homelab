@@ -19,7 +19,6 @@ enabled_stacks:
   - grampsweb
   - koillection
   - portainer
-  - dozzle
   - uptime-kuma
   - homepage
   - filebrowser
@@ -44,7 +43,6 @@ stacks_with_config:
 caddy_sites:
   - { hostname: adventurelog, upstream: "adventurelog-frontend:3000" }
   - { hostname: adguard, upstream: "adguard:3000" }
-  - { hostname: dozzle, upstream: "dozzle:8080" }
   - { hostname: filebrowser, upstream: "filebrowser:80" }
   - { hostname: grampsweb, upstream: "grampsweb:5000" }
   - { hostname: homepage, upstream: "homepage:3000" }

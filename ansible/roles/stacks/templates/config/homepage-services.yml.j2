@@ -27,7 +27,7 @@
         widget:
           type: portainer
           url: http://portainer:9000
-          env: 1
+          env: 3
           key: {% raw %}{{HOMEPAGE_VAR_PORTAINER_KEY}}{% endraw %}
 
     - AdGuard:
@@ -42,7 +42,7 @@
 
     - Proxmox:
         icon: si-proxmox
-        href: https://pve.{{ domain }}:8006
+        href: https://pve.{{ domain }}
         description: Hypervisor management
         widget:
           type: proxmox
@@ -60,9 +60,4 @@
         widget:
           type: uptimekuma
           url: http://uptime-kuma:3001
-          slug: default
-
-    - Dozzle:
-        icon: mdi-text-box-search-outline
-        href: https://dozzle.{{ domain }}
-        description: Docker log viewer
+          slug: homepage
