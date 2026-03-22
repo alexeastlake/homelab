@@ -23,7 +23,7 @@ vault_adventurelog_frontend_url: "http://localhost:8015"
 vault_koillection_db_password: "change-me"
 
 # AdGuard Home
-# Password hash: run `htpasswd -B -n -b "" yourpassword | cut -c2-` to generate
+# Password hash
 vault_adguard_admin_user: "admin"
 vault_adguard_admin_password_hash: "change-me"
 
