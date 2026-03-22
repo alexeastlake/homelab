@@ -17,6 +17,8 @@
 
 # Ansible
 .vault_pass
+**/vault.yaml
+**/vault.yml
 ansible/**/*.retry
 
 # Terraform
