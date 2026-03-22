@@ -24,28 +24,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_route" "homelab_network" {
   network    = "10.10.10.0/24"
 }
 
-# --- Tunnel Ingress (public hostname for PVE) ---
-
-resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
-  account_id = var.cloudflare_account_id
-  tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.homelab.id
-
-  config = {
-    ingress = [
-      {
-        hostname = "pve.alexserver.home.arpa"
-        service  = "https://10.10.10.1:8006"
-        origin_request = {
-          no_tls_verify = true
-        }
-      },
-      {
-        service = "http_status:404"
-      }
-    ]
-  }
-}
-
 # --- WARP Device Profile ---
 
 resource "cloudflare_zero_trust_device_custom_profile" "homelab" {
