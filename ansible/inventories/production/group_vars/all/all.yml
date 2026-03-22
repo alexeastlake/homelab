@@ -49,7 +49,6 @@ caddy_sites:
   - { hostname: koillection, upstream: "koillection:80" }
   - { hostname: portainer, upstream: "portainer:9000" }
   - { hostname: uptime-kuma, upstream: "uptime-kuma:3001" }
-  - { hostname: pve, upstream: "10.10.10.1:8006", tls_upstream: true }
 
 # BorgBackup
 borg_repo: /srv/backup/borg
