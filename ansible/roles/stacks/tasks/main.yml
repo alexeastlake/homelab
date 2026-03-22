@@ -9,6 +9,7 @@
       - "--exclude=.env"
       - "--exclude=conf.yml"
       - "--exclude=conf.yaml"
+      - "--exclude=Caddyfile"
 
 - name: Deploy enabled stacks
   ansible.builtin.include_tasks: deploy_stack.yml
