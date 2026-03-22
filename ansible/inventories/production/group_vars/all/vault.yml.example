@@ -30,7 +30,6 @@ vault_portainer_api_key: "change-me"
 # AdGuard Home
 vault_adguard_admin_user: "admin"
 vault_adguard_admin_password: "change-me"
-# Password hash: run `htpasswd -B -n -b "" yourpassword | cut -c2-` to generate
 vault_adguard_admin_password_hash: "change-me"
 
 # Samba
