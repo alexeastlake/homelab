@@ -22,6 +22,11 @@ vault_adventurelog_frontend_url: "http://localhost:8015"
 # Koillection
 vault_koillection_db_password: "change-me"
 
+# AdGuard Home
+# Password hash: run `htpasswd -B -n -b "" yourpassword | cut -c2-` to generate
+vault_adguard_admin_user: "admin"
+vault_adguard_admin_password_hash: "change-me"
+
 # Samba
 vault_samba_name: "smbshare"
 vault_samba_user: "change-me"
