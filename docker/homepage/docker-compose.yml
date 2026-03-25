@@ -2,16 +2,10 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
-    # ports:
-    #   - 3000:3000
+    ports:
+      - "3010:3000"
     volumes:
       - /srv/data/homepage/config:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     env_file:
       - .env
-    networks:
-      - proxy
-
-networks:
-  proxy:
-    external: true

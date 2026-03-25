@@ -1,0 +1,50 @@
+---
+- name: Check if AdGuard Home is installed
+  ansible.builtin.stat:
+    path: /opt/AdGuardHome/AdGuardHome
+  register: adguard_binary
+
+- name: Download AdGuard Home
+  ansible.builtin.get_url:
+    url: https://static.adguard.com/adguardhome/release/AdGuardHome_linux_amd64.tar.gz
+    dest: /tmp/AdGuardHome.tar.gz
+    mode: "0644"
+  when: not adguard_binary.stat.exists
+
+- name: Extract AdGuard Home
+  ansible.builtin.unarchive:
+    src: /tmp/AdGuardHome.tar.gz
+    dest: /opt
+    remote_src: true
+  when: not adguard_binary.stat.exists
+
+- name: Create AdGuard Home working directory
+  ansible.builtin.file:
+    path: /opt/adguardhome/work
+    state: directory
+    mode: "0755"
+
+- name: Create userfilters directory
+  ansible.builtin.file:
+    path: /opt/adguardhome/work/userfilters
+    state: directory
+    mode: "0755"
+
+- name: Template AdGuard Home config
+  ansible.builtin.template:
+    src: AdGuardHome.yaml.j2
+    dest: /opt/adguardhome/work/AdGuardHome.yaml
+    mode: "0600"
+  notify: restart adguard
+
+- name: Install AdGuard Home systemd service
+  ansible.builtin.command: /opt/AdGuardHome/AdGuardHome -s install -w /opt/adguardhome/work -c /opt/adguardhome/work/AdGuardHome.yaml
+  args:
+    creates: /etc/systemd/system/AdGuardHome.service
+
+- name: Ensure AdGuard Home is enabled and running
+  ansible.builtin.systemd:
+    name: AdGuardHome
+    state: started
+    enabled: true
+    daemon_reload: true

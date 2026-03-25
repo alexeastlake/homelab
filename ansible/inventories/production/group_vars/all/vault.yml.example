@@ -32,7 +32,12 @@ vault_adguard_admin_user: "admin"
 vault_adguard_admin_password: "change-me"
 vault_adguard_admin_password_hash: "change-me"
 
-# Samba
-vault_samba_name: "smbshare"
-vault_samba_user: "change-me"
-vault_samba_password: "change-me"
+# Caddy shared root CA (extract from existing Caddy data dir)
+vault_caddy_root_ca_cert: |
+  -----BEGIN CERTIFICATE-----
+  change-me
+  -----END CERTIFICATE-----
+vault_caddy_root_ca_key: |
+  -----BEGIN EC PRIVATE KEY-----
+  change-me
+  -----END EC PRIVATE KEY-----

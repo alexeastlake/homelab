@@ -1,21 +1,44 @@
 ---
-- name: Provision homelab Docker host
-  hosts: homelab
+# --- Foundation: Storage ---
+- name: Provision storage server
+  hosts: storage
   become: true
-
   roles:
     - common
-    - docker
-    - directories
-    - docker_network
-    - caddy
-    - stacks
+    - nfs_server
     - borgbackup
 
+# --- Networking: DNS ---
+- name: Provision DNS server
+  hosts: dns
+  become: true
+  roles:
+    - common
+    - adguard
+
+# --- Networking: Reverse proxy ---
+- name: Provision reverse proxy
+  hosts: caddy
+  become: true
+  roles:
+    - common
+    - caddy
+
+# --- Networking: Cloudflare tunnel ---
 - name: Provision Cloudflare tunnel
   hosts: tunnel
   become: true
-
   roles:
     - common
     - cloudflared
+
+# --- Compute: Docker host ---
+- name: Provision Docker host
+  hosts: homelab
+  become: true
+  roles:
+    - common
+    - nfs_client
+    - docker
+    - directories
+    - stacks

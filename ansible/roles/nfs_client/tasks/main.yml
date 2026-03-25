@@ -1,0 +1,19 @@
+---
+- name: Install NFS client
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
+
+- name: Create NFS mount point
+  ansible.builtin.file:
+    path: /srv/data
+    state: directory
+    mode: "0777"
+
+- name: Mount NFS share
+  ansible.posix.mount:
+    src: "{{ nfs_server_ip }}:/srv/data"
+    path: /srv/data
+    fstype: nfs
+    opts: rw,sync,hard,intr
+    state: mounted

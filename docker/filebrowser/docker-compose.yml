@@ -3,18 +3,10 @@ services:
     image: filebrowser/filebrowser:latest
     container_name: filebrowser
     volumes:
-      # Files to manage
       - /srv/data/storage:/srv
-      # Persistent database and config
       - /srv/data/filebrowser/database:/database
       - /srv/data/filebrowser/config:/config
-    # ports:
-    #   - "8080:80"
-    networks:
-      - proxy
+    ports:
+      - "8003:80"
     user: "0:0"
     restart: unless-stopped
-
-networks:
-  proxy:
-    external: true

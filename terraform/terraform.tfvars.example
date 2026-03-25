@@ -4,25 +4,28 @@ proxmox_username  = "root@pam"
 proxmox_password  = "your-proxmox-root-password"
 proxmox_node      = "pve"
 
-# --- Docker Host LXC ---
-lxc_template = "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
-lxc_cores    = 4
-lxc_memory_mb = 4096
-lxc_swap_mb  = 1024
-disk_gb      = 45
-storage      = "local-lvm"
-
-lxc_ip       = "10.10.10.10/24"
-gateway      = "10.10.10.1"
-dns_servers  = ["1.1.1.1", "8.8.8.8"]
-
+# --- Common LXC ---
+lxc_template   = "local:vztmpl/debian-12-standard_12.12-1_amd64.tar.zst"
+storage        = "local-lvm"
+gateway        = "10.10.10.1"
+dns_servers    = ["1.1.1.1", "8.8.8.8"]
 ssh_public_key = "ssh-ed25519 AAAA... user@host"
+
+# --- LXC IPs (ascending order matches CT IDs) ---
+storage_lxc_ip = "10.10.10.10/24"  # CT100
+dns_lxc_ip     = "10.10.10.20/24"  # CT101
+caddy_lxc_ip   = "10.10.10.30/24"  # CT102
+tunnel_lxc_ip  = "10.10.10.40/24"  # CT103
+lxc_ip         = "10.10.10.50/24"  # CT104 (Docker host)
+
+# --- Docker Host LXC specs ---
+lxc_cores     = 4
+lxc_memory_mb = 4096
+lxc_swap_mb   = 1024
+disk_gb       = 8
 
 # --- Cloudflare ---
 cloudflare_api_token  = "your-cloudflare-api-token"
 cloudflare_account_id = "your-cloudflare-account-id"
 cloudflare_user_email = "your-email@example.com"
 tunnel_name           = "homelab"
-
-# --- Tunnel LXC ---
-tunnel_lxc_ip = "10.10.10.20/24"

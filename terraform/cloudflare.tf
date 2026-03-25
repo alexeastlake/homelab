@@ -50,6 +50,6 @@ resource "cloudflare_zero_trust_device_custom_profile_local_domain_fallback" "ho
   domains = [{
     suffix      = "alexserver.home.arpa"
     description = "Homelab local domain"
-    dns_server  = ["10.10.10.10"]
+    dns_server  = ["10.10.10.20"]
   }]
 }

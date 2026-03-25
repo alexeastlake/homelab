@@ -1,0 +1,30 @@
+---
+- name: Install NFS server
+  ansible.builtin.apt:
+    name: nfs-kernel-server
+    state: present
+
+- name: Create data directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "{{ item.mode }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  loop:
+    - { path: /srv/data, mode: "0777", owner: root, group: root }
+    - { path: /srv/backup, mode: "0750", owner: root, group: root }
+    - { path: /srv/backup/borg, mode: "0750", owner: root, group: root }
+
+- name: Configure NFS exports
+  ansible.builtin.template:
+    src: exports.j2
+    dest: /etc/exports
+    mode: "0644"
+  notify: restart nfs
+
+- name: Ensure NFS server is enabled and running
+  ansible.builtin.systemd:
+    name: nfs-kernel-server
+    state: started
+    enabled: true
