@@ -34,6 +34,23 @@
     creates: /etc/systemd/system/cloudflared.service
   notify: restart cloudflared
 
+# TODO: Remove http2 override when migrating to full VMs (QUIC sysctl will work natively)
+- name: Create systemd override directory
+  ansible.builtin.file:
+    path: /etc/systemd/system/cloudflared.service.d
+    state: directory
+    mode: "0755"
+
+- name: Force HTTP/2 protocol (QUIC fails in unprivileged LXC)
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/cloudflared.service.d/override.conf
+    content: |
+      [Service]
+      ExecStart=
+      ExecStart=/usr/bin/cloudflared --no-autoupdate --protocol http2 tunnel run --token {{ cloudflared_tunnel_token }}
+    mode: "0644"
+  notify: restart cloudflared
+
 - name: Ensure cloudflared is enabled and running
   ansible.builtin.systemd:
     name: cloudflared
