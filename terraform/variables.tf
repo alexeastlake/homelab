@@ -114,7 +114,7 @@ variable "lxc_swap_mb" {
 variable "disk_gb" {
   description = "Root disk size in GB for the Docker host LXC"
   type        = number
-  default     = 8
+  default     = 16
 }
 
 # --- Cloudflare ---
