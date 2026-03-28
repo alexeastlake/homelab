@@ -12,12 +12,12 @@ resource "proxmox_virtual_environment_container" "storage" {
   }
 
   cpu {
-    cores = 1
+    cores = var.lxc_specs["storage"].cores
   }
 
   memory {
-    dedicated = 512
-    swap      = 256
+    dedicated = var.lxc_specs["storage"].memory_mb
+    swap      = var.lxc_specs["storage"].swap_mb
   }
 
   # Privileged required for NFS kernel server in LXC
@@ -29,7 +29,7 @@ resource "proxmox_virtual_environment_container" "storage" {
 
   disk {
     datastore_id = var.storage
-    size         = 30
+    size         = var.lxc_specs["storage"].disk_gb
   }
 
   network_interface {
@@ -77,19 +77,19 @@ resource "proxmox_virtual_environment_container" "dns" {
   }
 
   cpu {
-    cores = 1
+    cores = var.lxc_specs["dns"].cores
   }
 
   memory {
-    dedicated = 256
-    swap      = 256
+    dedicated = var.lxc_specs["dns"].memory_mb
+    swap      = var.lxc_specs["dns"].swap_mb
   }
 
   unprivileged = true
 
   disk {
     datastore_id = var.storage
-    size         = 2
+    size         = var.lxc_specs["dns"].disk_gb
   }
 
   network_interface {
@@ -137,19 +137,19 @@ resource "proxmox_virtual_environment_container" "caddy" {
   }
 
   cpu {
-    cores = 1
+    cores = var.lxc_specs["caddy"].cores
   }
 
   memory {
-    dedicated = 256
-    swap      = 256
+    dedicated = var.lxc_specs["caddy"].memory_mb
+    swap      = var.lxc_specs["caddy"].swap_mb
   }
 
   unprivileged = true
 
   disk {
     datastore_id = var.storage
-    size         = 2
+    size         = var.lxc_specs["caddy"].disk_gb
   }
 
   network_interface {
@@ -197,19 +197,19 @@ resource "proxmox_virtual_environment_container" "tunnel" {
   }
 
   cpu {
-    cores = 2
+    cores = var.lxc_specs["tunnel"].cores
   }
 
   memory {
-    dedicated = 512
-    swap      = 256
+    dedicated = var.lxc_specs["tunnel"].memory_mb
+    swap      = var.lxc_specs["tunnel"].swap_mb
   }
 
   unprivileged = true
 
   disk {
     datastore_id = var.storage
-    size         = 2
+    size         = var.lxc_specs["tunnel"].disk_gb
   }
 
   network_interface {
@@ -257,12 +257,12 @@ resource "proxmox_virtual_environment_container" "docker_host" {
   }
 
   cpu {
-    cores = var.lxc_cores
+    cores = var.lxc_specs["docker"].cores
   }
 
   memory {
-    dedicated = var.lxc_memory_mb
-    swap      = var.lxc_swap_mb
+    dedicated = var.lxc_specs["docker"].memory_mb
+    swap      = var.lxc_specs["docker"].swap_mb
   }
 
   features {
@@ -281,7 +281,7 @@ resource "proxmox_virtual_environment_container" "docker_host" {
 
   disk {
     datastore_id = var.storage
-    size         = var.disk_gb
+    size         = var.lxc_specs["docker"].disk_gb
   }
 
   network_interface {

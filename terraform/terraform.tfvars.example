@@ -18,11 +18,14 @@ caddy_lxc_ip   = "10.10.10.30/24"  # CT102
 tunnel_lxc_ip  = "10.10.10.40/24"  # CT103
 lxc_ip         = "10.10.10.50/24"  # CT104 (Docker host)
 
-# --- Docker Host LXC specs ---
-lxc_cores     = 4
-lxc_memory_mb = 4096
-lxc_swap_mb   = 1024
-disk_gb       = 16
+# --- LXC resource specs (override any container's defaults) ---
+lxc_specs = {
+  storage = { cores = 1, memory_mb = 512, swap_mb = 256, disk_gb = 30 }
+  dns     = { cores = 1, memory_mb = 256, swap_mb = 256, disk_gb = 2 }
+  caddy   = { cores = 1, memory_mb = 256, swap_mb = 256, disk_gb = 2 }
+  tunnel  = { cores = 2, memory_mb = 512, swap_mb = 256, disk_gb = 2 }
+  docker  = { cores = 4, memory_mb = 4096, swap_mb = 1024, disk_gb = 24 }
+}
 
 # --- Cloudflare ---
 cloudflare_api_token  = "your-cloudflare-api-token"

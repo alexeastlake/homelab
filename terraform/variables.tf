@@ -93,28 +93,23 @@ variable "lxc_ip" {
   default     = "10.10.10.50/24"
 }
 
-variable "lxc_cores" {
-  description = "CPU cores for the Docker host LXC"
-  type        = number
-  default     = 4
-}
+# --- LXC resource specs ---
 
-variable "lxc_memory_mb" {
-  description = "Memory in MB for the Docker host LXC"
-  type        = number
-  default     = 4096
-}
-
-variable "lxc_swap_mb" {
-  description = "Swap in MB for the Docker host LXC"
-  type        = number
-  default     = 1024
-}
-
-variable "disk_gb" {
-  description = "Root disk size in GB for the Docker host LXC"
-  type        = number
-  default     = 16
+variable "lxc_specs" {
+  description = "Per-container resource specs (cores, memory_mb, swap_mb, disk_gb)"
+  type = map(object({
+    cores     = number
+    memory_mb = number
+    swap_mb   = number
+    disk_gb   = number
+  }))
+  default = {
+    storage = { cores = 1, memory_mb = 512, swap_mb = 256, disk_gb = 30 }
+    dns     = { cores = 1, memory_mb = 256, swap_mb = 256, disk_gb = 2 }
+    caddy   = { cores = 1, memory_mb = 256, swap_mb = 256, disk_gb = 2 }
+    tunnel  = { cores = 2, memory_mb = 512, swap_mb = 256, disk_gb = 2 }
+    docker  = { cores = 4, memory_mb = 4096, swap_mb = 1024, disk_gb = 24 }
+  }
 }
 
 # --- Cloudflare ---
