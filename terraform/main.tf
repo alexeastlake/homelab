@@ -268,6 +268,7 @@ resource "proxmox_virtual_environment_container" "docker_host" {
   features {
     nesting = true # required for Docker inside LXC
     keyctl  = true # required for Docker inside LXC
+    mount   = ["nfs"]  # required for NFS mounts in unprivileged LXC
   }
 
   unprivileged = true
