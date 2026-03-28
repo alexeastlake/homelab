@@ -16,6 +16,15 @@
     - { path: /srv/backup, mode: "0750", owner: root, group: root }
     - { path: /srv/backup/borg, mode: "0750", owner: root, group: root }
 
+# TODO: Replace 0777 with proper UID mapping when migrating to full VMs
+- name: Create stack data directories
+  ansible.builtin.file:
+    path: "/srv/data/{{ item }}"
+    state: directory
+    mode: "0777"
+    recurse: true
+  loop: "{{ enabled_stacks }}"
+
 - name: Configure NFS exports
   ansible.builtin.template:
     src: exports.j2
