@@ -17,7 +17,7 @@
     state: present
     update_cache: true  # needed after adding new repo
 
-- name: Set QUIC UDP buffer sizes
+- name: Set QUIC UDP buffer sizes (best-effort, may fail in unprivileged LXC)
   ansible.posix.sysctl:
     name: "{{ item.key }}"
     value: "{{ item.value }}"
@@ -26,6 +26,7 @@
   loop:
     - { key: net.core.rmem_max, value: "7500000" }
     - { key: net.core.wmem_max, value: "7500000" }
+  ignore_errors: true
 
 - name: Install cloudflared as a service
   ansible.builtin.command:
