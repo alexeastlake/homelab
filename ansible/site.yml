@@ -39,5 +39,4 @@
   roles:
     - common
     - docker
-    - directories
     - stacks
