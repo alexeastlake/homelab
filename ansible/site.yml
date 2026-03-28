@@ -38,7 +38,6 @@
   become: true
   roles:
     - common
-    - nfs_client
     - docker
     - directories
     - stacks

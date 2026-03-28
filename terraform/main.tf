@@ -268,7 +268,13 @@ resource "proxmox_virtual_environment_container" "docker_host" {
   features {
     nesting = true # required for Docker inside LXC
     keyctl  = true # required for Docker inside LXC
-    mount   = ["nfs"]  # required for NFS mounts in unprivileged LXC
+  }
+
+  # Bind mount NFS share from PVE host into container
+  # Requires: PVE fstab entry mounting NFS to /mnt/nfs-data
+  mount_point {
+    volume = "/mnt/nfs-data"
+    path   = "/srv/data"
   }
 
   unprivileged = true
