@@ -48,6 +48,7 @@
       [Service]
       ExecStart=
       ExecStart=/usr/bin/cloudflared --no-autoupdate --protocol http2 tunnel run --token {{ cloudflared_tunnel_token }}
+      TimeoutStartSec=60
     mode: "0644"
   notify: restart cloudflared
 
