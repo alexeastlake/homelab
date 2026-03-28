@@ -22,7 +22,7 @@ lxc_ip         = "10.10.10.50/24"  # CT104 (Docker host)
 lxc_cores     = 4
 lxc_memory_mb = 4096
 lxc_swap_mb   = 1024
-disk_gb       = 8
+disk_gb       = 16
 
 # --- Cloudflare ---
 cloudflare_api_token  = "your-cloudflare-api-token"
