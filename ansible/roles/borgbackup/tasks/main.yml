@@ -22,6 +22,30 @@
   ansible.builtin.command: borg init --encryption=none {{ borg_repo }}
   when: borg_info.rc != 0
 
+# SSH key for stopping/starting containers on Docker host during backup
+- name: Generate SSH key for backup
+  ansible.builtin.command: ssh-keygen -t ed25519 -N '' -f /root/.ssh/id_ed25519
+  args:
+    creates: /root/.ssh/id_ed25519
+
+- name: Read storage LXC public key
+  ansible.builtin.slurp:
+    src: /root/.ssh/id_ed25519.pub
+  register: storage_ssh_pubkey
+
+- name: Add storage LXC public key to Docker host
+  delegate_to: docker-host
+  ansible.posix.authorized_key:
+    user: root
+    key: "{{ storage_ssh_pubkey.content | b64decode }}"
+    state: present
+
+- name: Trust Docker host SSH host key
+  ansible.builtin.known_hosts:
+    name: "{{ docker_host_ip }}"
+    key: "{{ lookup('pipe', 'ssh-keyscan ' + docker_host_ip + ' 2>/dev/null') }}"
+    state: present
+
 - name: Template backup script
   ansible.builtin.template:
     src: borg-backup.sh.j2

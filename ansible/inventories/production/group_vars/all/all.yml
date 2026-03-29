@@ -78,6 +78,11 @@ borg_keep_weekly: 4
 borg_keep_monthly: 6
 borg_cron_hour: "14"
 borg_cron_minute: "0"
+# Containers stopped before backup and restarted after (locked files on NFS)
+borg_stop_containers:
+  - grampsweb
+  - grampsweb_celery
+  - homepage
 
 # Secrets (referenced from vault.yml)
 cloudflared_tunnel_token: "{{ vault_cloudflared_tunnel_token }}"  # used by tunnel LXC role
