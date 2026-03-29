@@ -18,14 +18,9 @@
       - python3-bcrypt
     state: present
 
-- name: Check current timezone
-  ansible.builtin.command: timedatectl show -p Timezone --value
-  register: current_tz
-  changed_when: false
-
 - name: Set timezone
-  ansible.builtin.command: timedatectl set-timezone {{ timezone }}
-  when: current_tz.stdout != timezone
+  community.general.timezone:
+    name: "{{ timezone }}"
 
 - name: Enable unattended-upgrades
   ansible.builtin.copy:
