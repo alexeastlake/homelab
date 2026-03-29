@@ -35,13 +35,14 @@
     - { key: net.core.wmem_max, value: "7500000" }
   ignore_errors: true
 
-- name: Install cloudflared as a service
-  ansible.builtin.command:
-    cmd: "cloudflared service install {{ cloudflared_tunnel_token }}"
-    creates: /etc/systemd/system/cloudflared.service
+- name: Template cloudflared systemd service
+  ansible.builtin.template:
+    src: cloudflared.service.j2
+    dest: /etc/systemd/system/cloudflared.service
+    mode: "0644"
   notify: restart cloudflared
 
-- name: Remove HTTP/2 override if present
+- name: Remove legacy overrides if present
   ansible.builtin.file:
     path: /etc/systemd/system/cloudflared.service.d
     state: absent
