@@ -213,6 +213,7 @@ Note: Backups are currently on the same disk. Off-site/off-disk backup target is
 - Migrate to better hardware with ethernet (remove WiFi NAT, use direct bridge)
 - Migrate from LXCs to full VMs (eliminates all NFS/UID/chown workarounds)
 - Dedicated bootstrap machine (currently Proxmox host runs Terraform/Ansible)
+- Back up Terraform state (`terraform.tfstate`) and Ansible vault (`vault.yml`, `.vault_pass`) — currently only on PVE host local disk
 - Off-disk backup target (NAS, external drive, or cloud)
 - NFS authentication (Kerberos) and tightened file permissions (replace 0777)
 - Local package mirror / caching proxy for faster Ansible runs
