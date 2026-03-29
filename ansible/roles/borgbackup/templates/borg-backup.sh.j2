@@ -13,7 +13,14 @@ echo "=== Borg backup started: $(date) ==="
 # Containers are restarted after the archive is created, even if Borg fails.
 echo "Stopping all containers for consistent backup..."
 ssh root@{{ docker_host_ip }} "docker stop \$(docker ps -q)" || true
-sleep 5  # wait for NFS locks to release
+echo "Waiting for NFS locks to release..."
+for i in $(seq 1 30); do
+    if cat /srv/data/uptime-kuma/data/kuma.db > /dev/null 2>&1; then
+        echo "Locks released after ${i}s"
+        break
+    fi
+    sleep 1
+done
 trap 'echo "Restarting all containers..."; ssh root@{{ docker_host_ip }} "docker start \$(docker ps -a -q)" || true' EXIT
 
 # Create archive
