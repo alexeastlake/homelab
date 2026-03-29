@@ -14,3 +14,19 @@
 
 **/conf.yaml
 **/conf.yml
+
+# Ansible
+.vault_pass
+**/vault.yaml
+**/vault.yml
+ansible/**/*.retry
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
+
+# Claude
+.claude/

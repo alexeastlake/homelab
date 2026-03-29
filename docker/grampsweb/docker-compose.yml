@@ -1,9 +1,12 @@
 services:
   grampsweb: &grampsweb
     image: ghcr.io/gramps-project/grampsweb:latest
+    container_name: grampsweb
     restart: unless-stopped
     ports:
-      - "8085:5000"
+      - "5000:5000"
+    networks:
+      - grampsweb-internal
     environment:
       GRAMPSWEB_TREE: "Gramps Web"  # will create a new tree if not exists
       GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://grampsweb_redis:6379/0"
@@ -12,17 +15,17 @@ services:
     depends_on:
       - grampsweb_redis
     volumes:
-      - /srv/data/grampsweb/users:/app/users  # persist user database
-      - /srv/data/grampsweb/indexdir:/app/indexdir  # persist search index
-      - /srv/data/grampsweb/thumbnail_cache:/app/thumbnail_cache  # persist thumbnails
-      - /srv/data/grampsweb/cache:/app/cache  # persist export and report caches
-      - /srv/data/grampsweb/secret:/app/secret  # persist flask secret
-      - /srv/data/grampsweb/grampsdb:/root/.gramps/grampsdb  # persist Gramps database
-      - /srv/data/grampsweb/media:/app/media  # persist media files
+      - /srv/data/grampsweb/users:/app/users
+      - /srv/data/grampsweb/indexdir:/app/indexdir
+      - /srv/data/grampsweb/thumbnail_cache:/app/thumbnail_cache
+      - /srv/data/grampsweb/cache:/app/cache
+      - /srv/data/grampsweb/secret:/app/secret
+      - /srv/data/grampsweb/grampsdb:/root/.gramps/grampsdb
+      - /srv/data/grampsweb/media:/app/media
       - /srv/data/grampsweb/tmp:/tmp
 
   grampsweb_celery:
-    <<: *grampsweb  # YAML merge key copying the entire grampsweb service config
+    <<: *grampsweb
     ports: []
     container_name: grampsweb_celery
     depends_on:
@@ -33,4 +36,10 @@ services:
   grampsweb_redis:
     image: docker.io/library/redis:7.2.4-alpine
     container_name: grampsweb_redis
+    networks:
+      - grampsweb-internal
     restart: unless-stopped
+
+networks:
+  grampsweb-internal:
+    driver: bridge

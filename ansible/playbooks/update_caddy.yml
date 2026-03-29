@@ -1,0 +1,7 @@
+---
+- name: Update Caddy configuration
+  hosts: homelab
+  become: true
+
+  roles:
+    - caddy

@@ -1,0 +1,55 @@
+---
+- name: Add Cloudflare GPG key
+  ansible.builtin.get_url:
+    url: https://pkg.cloudflare.com/cloudflare-main.gpg
+    dest: /usr/share/keyrings/cloudflare-main.gpg
+    mode: "0644"
+
+- name: Add Cloudflare apt repo
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared bookworm main"
+    state: present
+    filename: cloudflared
+
+- name: Install cloudflared
+  ansible.builtin.apt:
+    name: cloudflared
+    state: present
+    update_cache: true  # needed after adding new repo
+
+# QUIC requires large UDP buffers. In unprivileged LXCs this sysctl will fail
+# because the container can't modify kernel parameters. The workaround is to set
+# these values on the PVE host directly (they are inherited by all containers):
+#   sysctl -w net.core.rmem_max=7500000
+#   sysctl -w net.core.wmem_max=7500000
+# Also add to /etc/sysctl.conf for persistence across reboots.
+# TODO: Remove this workaround when migrating to full VMs (sysctl will work natively)
+- name: Set QUIC UDP buffer sizes (will fail in unprivileged LXC — set on PVE host instead)
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
+    reload: true
+  loop:
+    - { key: net.core.rmem_max, value: "7500000" }
+    - { key: net.core.wmem_max, value: "7500000" }
+  ignore_errors: true
+
+- name: Template cloudflared systemd service
+  ansible.builtin.template:
+    src: cloudflared.service.j2
+    dest: /etc/systemd/system/cloudflared.service
+    mode: "0644"
+  notify: restart cloudflared
+
+- name: Remove legacy overrides if present
+  ansible.builtin.file:
+    path: /etc/systemd/system/cloudflared.service.d
+    state: absent
+  notify: restart cloudflared
+
+- name: Ensure cloudflared is enabled and running
+  ansible.builtin.systemd:
+    name: cloudflared
+    state: started
+    enabled: true

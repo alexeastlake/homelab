@@ -1,0 +1,43 @@
+---
+# Copy this file to vault.yml and fill in real values, then encrypt:
+#   cp vault.yml.example vault.yml
+#   # edit vault.yml with real values
+#   ansible-vault encrypt vault.yml
+
+# Cloudflare tunnel (get token from: terraform output -raw tunnel_token)
+vault_cloudflared_tunnel_token: "change-me"
+
+# AdventureLog
+vault_adventurelog_origin: "https://adventurelog.alexserver.home.arpa"
+vault_adventurelog_db_user: "adventure"
+vault_adventurelog_db_password: "change-me"
+vault_adventurelog_django_secret_key: "change-me"
+vault_adventurelog_admin_user: "admin"
+vault_adventurelog_admin_password: "change-me"
+vault_adventurelog_admin_email: "admin@example.com"
+vault_adventurelog_public_url: "http://localhost:8016"
+vault_adventurelog_csrf_origins: "http://localhost:8016,http://localhost:8015,https://adventurelog.alexserver.home.arpa"
+vault_adventurelog_frontend_url: "http://localhost:8015"
+
+# Koillection
+vault_koillection_db_password: "change-me"
+
+# Homepage widgets
+vault_proxmox_api_token_id: "root@pam!homepage"
+vault_proxmox_api_token_secret: "change-me"
+vault_portainer_api_key: "change-me"
+
+# AdGuard Home
+vault_adguard_admin_user: "admin"
+vault_adguard_admin_password: "change-me"
+vault_adguard_admin_password_hash: "change-me"
+
+# Caddy shared root CA (extract from existing Caddy data dir)
+vault_caddy_root_ca_cert: |
+  -----BEGIN CERTIFICATE-----
+  change-me
+  -----END CERTIFICATE-----
+vault_caddy_root_ca_key: |
+  -----BEGIN EC PRIVATE KEY-----
+  change-me
+  -----END EC PRIVATE KEY-----

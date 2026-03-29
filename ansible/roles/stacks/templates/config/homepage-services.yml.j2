@@ -1,0 +1,63 @@
+- Apps:
+    - AdventureLog:
+        icon: si-openlayers
+        href: https://adventurelog.{{ domain }}
+        description: Travel and adventure logging
+
+    - Koillection:
+        icon: si-blueprint
+        href: https://koillection.{{ domain }}
+        description: Collection management
+
+    - FileBrowser:
+        icon: si-files
+        href: https://filebrowser.{{ domain }}
+        description: Web file manager
+
+    - Gramps Web:
+        icon: mdi-family-tree
+        href: https://grampsweb.{{ domain }}
+        description: Genealogy and family history
+
+- Admin:
+    - Portainer:
+        icon: si-portainer
+        href: https://portainer.{{ domain }}
+        description: Docker container management
+        widget:
+          type: portainer
+          url: http://{{ docker_host_ip }}:9000
+          env: 1
+          key: {% raw %}{{HOMEPAGE_VAR_PORTAINER_KEY}}{% endraw %}
+
+    - AdGuard:
+        icon: si-adguard
+        href: https://adguard.{{ domain }}
+        description: DNS ad-blocking
+        widget:
+          type: adguard
+          url: http://10.10.10.20:3000
+          username: {{ adguard_admin_user }}
+          password: {{ adguard_admin_password }}
+
+    - Proxmox:
+        icon: si-proxmox
+        href: https://pve.{{ domain }}
+        description: Hypervisor management
+        widget:
+          type: proxmox
+          url: https://10.10.10.1:8006
+          username: {{ proxmox_api_token_id }}
+          password: {{ proxmox_api_token_secret }}
+          node: pve
+          insecure: true
+
+- Monitoring:
+    - Uptime Kuma:
+        icon: si-uptimekuma
+        href: https://uptime-kuma.{{ domain }}
+        description: Service uptime monitoring
+        widget:
+          type: uptimekuma
+          url: http://{{ docker_host_ip }}:3001
+          slug: default

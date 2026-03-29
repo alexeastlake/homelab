@@ -1,0 +1,23 @@
+---
+- name: "{{ stack_name }} | Template .env file"
+  ansible.builtin.template:
+    src: "env/{{ stack_name }}.env.j2"
+    dest: "{{ docker_compose_dir }}/{{ stack_name }}/.env"
+    mode: "0600"
+  when: stack_name in stacks_with_env
+
+- name: "{{ stack_name }} | Template config files"
+  ansible.builtin.include_tasks: "config/{{ stack_name }}.yml"
+  when: stack_name in stacks_with_config
+
+- name: "{{ stack_name }} | Deploy stack"
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_compose_dir }}/{{ stack_name }}"
+    state: present
+    pull: missing
+  register: compose_result
+
+- name: "{{ stack_name }} | Show deployment result"
+  ansible.builtin.debug:
+    msg: "Stack {{ stack_name }} deployed successfully"
+  when: compose_result is changed

@@ -1,0 +1,25 @@
+---
+- name: "homepage | Ensure config directory exists"
+  ansible.builtin.file:
+    path: /srv/data/homepage/config
+    state: directory
+
+- name: "homepage | Template services.yaml"
+  ansible.builtin.template:
+    src: config/homepage-services.yml.j2
+    dest: /srv/data/homepage/config/services.yaml
+
+- name: "homepage | Template settings.yaml"
+  ansible.builtin.template:
+    src: config/homepage-settings.yml.j2
+    dest: /srv/data/homepage/config/settings.yaml
+
+- name: "homepage | Template widgets.yaml"
+  ansible.builtin.template:
+    src: config/homepage-widgets.yml.j2
+    dest: /srv/data/homepage/config/widgets.yaml
+
+- name: "homepage | Template docker.yaml"
+  ansible.builtin.template:
+    src: config/homepage-docker.yaml.j2
+    dest: /srv/data/homepage/config/docker.yaml
