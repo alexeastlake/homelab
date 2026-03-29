@@ -1,5 +1,10 @@
 {% for site in caddy_sites %}
 {{ site.hostname }}.{{ domain }} {
+{% if site.basicauth_user is defined %}
+    basicauth {
+        {{ site.basicauth_user }} {{ site.basicauth_password_hash }}
+    }
+{% endif %}
 {% if site.tls_upstream | default(false) %}
     reverse_proxy https://{{ site.upstream }} {
         transport http {

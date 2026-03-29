@@ -32,6 +32,11 @@ vault_adguard_admin_user: "admin"
 vault_adguard_admin_password: "change-me"
 vault_adguard_admin_password_hash: "change-me"
 
+# Homepage basic auth (Caddy)
+# Generate hash: ssh root@10.10.10.30 caddy hash-password --plaintext 'your-password'
+vault_homepage_auth_user: "admin"
+vault_homepage_auth_password_hash: "change-me"
+
 # Caddy shared root CA (extract from existing Caddy data dir)
 vault_caddy_root_ca_cert: |
   -----BEGIN CERTIFICATE-----

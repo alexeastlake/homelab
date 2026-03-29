@@ -44,7 +44,10 @@ caddy_sites:
   - { hostname: adguard, upstream: "10.10.10.20:3000" }
   - { hostname: filebrowser, upstream: "{{ docker_host_ip }}:8003" }
   - { hostname: grampsweb, upstream: "{{ docker_host_ip }}:5000" }
-  - { hostname: homepage, upstream: "{{ docker_host_ip }}:3010" }
+  - hostname: homepage
+    upstream: "{{ docker_host_ip }}:3010"
+    basicauth_user: "{{ homepage_auth_user }}"
+    basicauth_password_hash: "{{ homepage_auth_password_hash }}"
   - { hostname: koillection, upstream: "{{ docker_host_ip }}:8002" }
   - { hostname: portainer, upstream: "{{ docker_host_ip }}:9000" }
   - { hostname: uptime-kuma, upstream: "{{ docker_host_ip }}:3001" }
@@ -91,3 +94,7 @@ adventurelog_csrf_origins: "{{ vault_adventurelog_csrf_origins }}"
 adventurelog_frontend_url: "{{ vault_adventurelog_frontend_url }}"
 
 koillection_db_password: "{{ vault_koillection_db_password }}"
+
+# Homepage basic auth (Caddy)
+homepage_auth_user: "{{ vault_homepage_auth_user }}"
+homepage_auth_password_hash: "{{ vault_homepage_auth_password_hash }}"
