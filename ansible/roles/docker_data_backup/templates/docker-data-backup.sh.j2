@@ -24,7 +24,7 @@ docker exec -e PGPASSWORD='{{ target.password }}' {{ target.container }} pg_dump
 # --- File-based data (safe to copy while running) ---
 {% for dir in docker_data_rsync_dirs %}
 echo "Syncing {{ dir }}..."
-rsync -a --delete "/var/lib/docker-data/{{ dir }}/" "${BACKUP_DIR}/{{ dir }}/"
+rsync -a --no-owner --no-group --delete "/var/lib/docker-data/{{ dir }}/" "${BACKUP_DIR}/{{ dir }}/"
 {% endfor %}
 
 echo "=== Docker data backup completed: $(date) ==="
