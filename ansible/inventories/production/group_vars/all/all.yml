@@ -66,9 +66,6 @@ adguard_dns_rewrites:
 proxmox_api_token_id: "{{ vault_proxmox_api_token_id }}"
 proxmox_api_token_secret: "{{ vault_proxmox_api_token_secret }}"
 portainer_api_key: "{{ vault_portainer_api_key }}"
-# Environment ID for the "local" Docker socket endpoint in Portainer.
-# Reset to 1 by wiping Portainer DB and re-adding the local environment first.
-portainer_local_env_id: 1
 
 # BorgBackup (runs on storage LXC)
 borg_repo: /srv/backup/borg
