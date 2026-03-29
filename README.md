@@ -10,7 +10,7 @@ Proxmox VE (laptop, 192.168.68.14 via WiFi)
 ├── vmbr0 bridge (10.10.10.0/24, NATed through WiFi)
 │
 ├── CT100 — Storage (10.10.10.10)              privileged, 30GB disk
-│   ├── NFS server (/srv/data exported to 10.10.10.0/24)
+│   ├── NFS server (/srv/data + /srv/backup exported to 10.10.10.0/24)
 │   └── BorgBackup (daily backups of /srv/data)
 │
 ├── CT101 — DNS (10.10.10.20)                  unprivileged, 2GB disk
@@ -29,7 +29,7 @@ Proxmox VE (laptop, 192.168.68.14 via WiFi)
     ├── Koillection     collection management
     ├── Portainer       container management
     ├── Uptime Kuma     uptime monitoring
-    ├── Homepage        dashboard with Proxmox/Portainer widgets
+    ├── Homepage        dashboard (Caddy basic auth)
     └── FileBrowser     web file manager
 ```
 
@@ -51,7 +51,6 @@ Device (WARP) → Cloudflare → Tunnel (CT103) → 10.10.10.0/24
 ## Prerequisites
 
 - Proxmox VE installed on the host
-- Debian 12 LXC template downloaded in Proxmox
 - Terraform and Ansible installed (currently run from the Proxmox host)
 - Cloudflare account with Zero Trust enabled
 - Cloudflare API token with Zero Trust + Tunnel permissions
@@ -60,26 +59,13 @@ Device (WARP) → Cloudflare → Tunnel (CT103) → 10.10.10.0/24
 
 ### 1. Proxmox Host
 
-After installing Proxmox:
+After installing Proxmox, run the bootstrap script (idempotent, safe to re-run):
 
-- Disable enterprise repos, enable `pve-no-subscription` repo
-- Install `wpasupplicant` for WiFi
-- Configure `/etc/network/interfaces`:
-  - `wlp2s0`: static IP on LAN (e.g. `192.168.68.14`)
-  - `vmbr0`: `10.10.10.1/24`, `bridge-ports none`, NAT masquerade through WiFi
-- Disable lid suspend: `HandleLidSwitch=ignore` in `/etc/systemd/logind.conf`
-- Set QUIC UDP buffer sizes (required for cloudflared QUIC in unprivileged LXCs):
-  ```bash
-  echo "net.core.rmem_max=7500000" >> /etc/sysctl.conf
-  echo "net.core.wmem_max=7500000" >> /etc/sysctl.conf
-  sysctl -p
-  ```
-- Mount NFS for Docker host bind mount:
-  ```bash
-  mkdir -p /mnt/nfs-data
-  echo "10.10.10.10:/srv/data /mnt/nfs-data nfs rw,sync,hard,intr 0 0" >> /etc/fstab
-  mount /mnt/nfs-data
-  ```
+```bash
+bash scripts/pve-bootstrap.sh
+```
+
+This configures repos, installs packages, sets sysctl values, prepares NFS mount points, and downloads the LXC template. Then manually configure `/etc/network/interfaces` for your hardware (the script prints an example) and reboot.
 
 ### 2. Terraform — Provision Infrastructure
 
@@ -105,7 +91,17 @@ All LXC specs (cores, memory, swap, disk) are configurable via the `lxc_specs` v
 
 Note: Proxmox uses username/password auth (not API tokens) because API tokens cannot create bind mounts on containers.
 
-### 3. Ansible — Configure and Deploy
+### 3. Mount NFS on PVE Host
+
+After Terraform creates the storage LXC and Ansible configures NFS exports:
+
+```bash
+mount -a
+```
+
+This mounts `/mnt/nfs-data` (read-write, used as bind mount for Docker host) and `/mnt/nfs-backups` (read-only, for grabbing backup archives).
+
+### 4. Ansible — Configure and Deploy
 
 ```bash
 cd ansible/
@@ -132,23 +128,25 @@ ansible-playbook site.yml
 2. **DNS** (CT101): `common` → `adguard`
 3. **Caddy** (CT102): `common` → `caddy`
 4. **Tunnel** (CT103): `common` → `cloudflared`
-5. **Docker Host** (CT104): `common` → `docker` → `stacks`
+5. **Docker Host** (CT104): `common` → `docker` → `stacks` → `docker_data_backup`
 
 #### Key role details:
 
 - **common** — base packages, timezone (Pacific/Auckland), auto-upgrades
-- **nfs_server** — NFS exports, creates stack data dirs with 0777 permissions
-- **borgbackup** — daily backups of `/srv/data`
+- **nfs_server** — NFS exports (`/srv/data` rw, `/srv/backup` ro), creates stack data dirs with 0777 permissions
+- **borgbackup** — daily backups of `/srv/data`, stops all Docker containers for consistent snapshots, exports latest archive as tar
 - **adguard** — standalone binary, systemd service, templated config with DNS rewrites
-- **caddy** — apt install, shared root CA from vault, Caddyfile templated from `caddy_sites`
+- **caddy** — apt install, shared root CA from vault, Caddyfile templated from `caddy_sites` (supports per-site basic auth)
 - **cloudflared** — apt install, templated systemd service with tunnel token from vault
 - **docker** — Docker CE + compose plugin from Docker's apt repo
 - **stacks** — creates base dirs, syncs compose files, templates .env and config files, deploys all services
+- **docker_data_backup** — daily `pg_dump` of PostgreSQL databases + `rsync` of file-based data to NFS (workaround for chown failures on NFS)
 
-### 4. Restore Data (if migrating)
+### 5. Restore Data (if migrating)
 
 ```bash
-# Copy backup archive to the storage LXC
+# Latest backup is always available at /mnt/nfs-backups/latest/latest.tar.gz
+# Or copy a backup archive to the storage LXC:
 scp backup.tar.gz root@10.10.10.10:/tmp/
 ssh root@10.10.10.10 tar xf /tmp/backup.tar.gz -C /
 ssh root@10.10.10.10 rm /tmp/backup.tar.gz
@@ -157,12 +155,12 @@ ssh root@10.10.10.10 rm /tmp/backup.tar.gz
 ansible-playbook site.yml
 ```
 
-### 5. Post-Deploy
+### 6. Post-Deploy
 
 - **AdGuard:** DNS rewrites are IaC-managed via Ansible template. Filter lists and other UI settings are manual.
 - **Uptime Kuma:** Create monitors and status pages via the UI. Config persists in `/srv/data/uptime-kuma/`.
 - **Portainer:** Generate an API key (My Account → Access tokens) and add it to the vault as `vault_portainer_api_key`. Used by the Homepage dashboard widget to display container stats.
-- **Homepage:** Proxmox API token must be created manually in the Proxmox UI (Datacenter → Permissions → API Tokens) and added to the vault.
+- **Homepage:** Proxmox API token must be created manually in the Proxmox UI (Datacenter → Permissions → API Tokens) and added to the vault. Protected by Caddy basic auth (credentials in vault).
 - **Caddy root CA:** The root CA cert/key are stored in Ansible vault and deployed by the caddy role. Install the root cert on your devices to trust internal HTTPS certs. The vault values must use YAML block scalar (`|`) to preserve PEM newlines.
 
 ## Secrets
@@ -177,7 +175,12 @@ See `vault.yml.example` and `terraform.tfvars.example` for all required variable
 
 ## Backups
 
-- **BorgBackup** — daily at 14:00 NZDT, backs up `/srv/data/` with 7 daily / 4 weekly / 6 monthly retention. Stored at `/srv/backup/borg` on the storage LXC (CT100).
+Some services (PostgreSQL, FileBrowser) store data on the Docker host's local disk (`/var/lib/docker-data/`) because they need `chown`, which fails on NFS bind mounts in unprivileged LXCs. This data is synced to NFS daily so BorgBackup can pick it up. This workaround goes away when migrating to full VMs.
+
+1. **`docker_data_backup`** (Docker Host, daily 01:00 NZDT) — `pg_dump` for PostgreSQL databases + `rsync` for file-based data → `/srv/data/docker-data/`
+2. **BorgBackup** (Storage LXC, daily 02:00 NZDT) — stops all Docker containers, archives `/srv/data/` (including synced data from step 1), restarts containers. Retention: 5 daily / 3 weekly / 3 monthly → `/srv/backup/borg`
+
+Latest backup is always available at `/srv/backup/latest/latest.tar.gz` (or `/mnt/nfs-backups/latest/latest.tar.gz` from the PVE host).
 
 Note: Backups are currently on the same disk. Off-site/off-disk backup target is planned.
 
@@ -185,10 +188,13 @@ Note: Backups are currently on the same disk. Off-site/off-disk backup target is
 
 | Issue | Workaround | Permanent fix |
 |---|---|---|
-| QUIC UDP buffers can't be set in unprivileged LXCs | Set `net.core.rmem_max` / `wmem_max` on PVE host | Migrate to full VMs |
+| QUIC UDP buffers can't be set in unprivileged LXCs | Set `net.core.rmem_max` / `wmem_max` on PVE host (via `pve-bootstrap.sh`) | Migrate to full VMs |
 | Unprivileged LXCs can't mount NFS | PVE mounts NFS, bind-mounted into container via Terraform | Migrate to full VMs |
 | NFS bind mount permissions (UID mapping) | Stack data dirs created with 0777 | Proper UID mapping with full VMs |
 | File mode changes fail on NFS bind mounts | Omit `mode:` from Ansible tasks writing to `/srv/data` | Migrate to full VMs |
+| NFS share has no authentication | Network-level isolation (only `10.10.10.0/24` can access) | Add Kerberos auth to NFS + tighten permissions when on full VMs |
+| Apps lock SQLite/BoltDB files on NFS | Borg stops all containers before backup, restarts after | Migrate to full VMs (Borg runs locally) |
+| PostgreSQL/FileBrowser need chown (fails on NFS) | Data on local disk, synced to NFS daily via `docker_data_backup` | Migrate to full VMs (data lives on NFS directly) |
 
 ## Current Hardware
 
@@ -205,7 +211,9 @@ Note: Backups are currently on the same disk. Off-site/off-disk backup target is
 ## Future Plans
 
 - Migrate to better hardware with ethernet (remove WiFi NAT, use direct bridge)
+- Migrate from LXCs to full VMs (eliminates all NFS/UID/chown workarounds)
 - Dedicated bootstrap machine (currently Proxmox host runs Terraform/Ansible)
 - Off-disk backup target (NAS, external drive, or cloud)
+- NFS authentication (Kerberos) and tightened file permissions (replace 0777)
 - Local package mirror / caching proxy for faster Ansible runs
 - Ollama + Open-WebUI when hardware allows

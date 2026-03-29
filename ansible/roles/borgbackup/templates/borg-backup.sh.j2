@@ -9,6 +9,20 @@ ARCHIVE="{{ borg_archive_prefix }}-${HOSTNAME}-${TIMESTAMP}"
 
 echo "=== Borg backup started: $(date) ==="
 
+# Stop all containers to ensure consistent backup (SQLite/BoltDB lock files on NFS).
+# Containers are restarted after the archive is created, even if Borg fails.
+echo "Stopping all containers for consistent backup..."
+ssh root@{{ docker_host_ip }} "docker stop \$(docker ps -q)" || true
+echo "Waiting for NFS locks to release..."
+for i in $(seq 1 30); do
+    if cat /srv/data/uptime-kuma/data/kuma.db > /dev/null 2>&1; then
+        echo "Locks released after ${i}s"
+        break
+    fi
+    sleep 1
+done
+trap 'echo "Restarting all containers..."; ssh root@{{ docker_host_ip }} "docker start \$(docker ps -a -q)" || true' EXIT
+
 # Create archive
 borg create \
     --compression {{ borg_compression }} \
@@ -27,5 +41,12 @@ borg prune \
     --keep-daily {{ borg_keep_daily }} \
     --keep-weekly {{ borg_keep_weekly }} \
     --keep-monthly {{ borg_keep_monthly }}
+
+# Export latest archive as a tar for easy grabbing
+EXPORT_DIR="/srv/backup/latest"
+mkdir -p "${EXPORT_DIR}"
+rm -f "${EXPORT_DIR}/latest.tar.gz"
+borg export-tar "${BORG_REPO}::${ARCHIVE}" "${EXPORT_DIR}/latest.tar.gz"
+echo "Latest backup exported to ${EXPORT_DIR}/latest.tar.gz"
 
 echo "=== Borg backup completed: $(date) ==="

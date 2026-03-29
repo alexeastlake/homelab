@@ -1,0 +1,30 @@
+#!/bin/bash
+set -euo pipefail
+
+# Syncs Docker host local data (/var/lib/docker-data) to NFS for BorgBackup.
+# PostgreSQL is dumped via pg_dump (file-copying a running DB can corrupt it).
+# Everything else is rsynced directly.
+# TODO: Remove when migrating to full VMs (data can live on NFS with proper UID mapping).
+
+BACKUP_DIR="/srv/data/docker-data"
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M)
+
+echo "=== Docker data backup started: $(date) ==="
+
+mkdir -p "${BACKUP_DIR}"
+
+# --- PostgreSQL dumps (safe, consistent snapshots) ---
+{% for target in docker_data_pg_targets %}
+echo "Dumping {{ target.container }} ({{ target.dbname }})..."
+mkdir -p "${BACKUP_DIR}/{{ target.stack }}"
+docker exec -e PGPASSWORD='{{ target.password }}' {{ target.container }} pg_dump -U {{ target.user }} {{ target.dbname }} \
+    | gzip > "${BACKUP_DIR}/{{ target.stack }}/{{ target.dbname }}.sql.gz"
+{% endfor %}
+
+# --- File-based data (safe to copy while running) ---
+{% for dir in docker_data_rsync_dirs %}
+echo "Syncing {{ dir }}..."
+rsync -a --no-owner --no-group --delete "/var/lib/docker-data/{{ dir }}/" "${BACKUP_DIR}/{{ dir }}/"
+{% endfor %}
+
+echo "=== Docker data backup completed: $(date) ==="

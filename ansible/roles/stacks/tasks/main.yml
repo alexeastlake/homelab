@@ -9,6 +9,7 @@
   loop:
     - { path: /srv/secrets, mode: "0700", owner: root, group: root }
     - { path: "{{ docker_compose_dir }}", mode: "0755", owner: root, group: root }
+    - { path: /var/lib/docker-data, mode: "0755", owner: root, group: root }
 
 - name: Sync docker compose files to target
   ansible.posix.synchronize:

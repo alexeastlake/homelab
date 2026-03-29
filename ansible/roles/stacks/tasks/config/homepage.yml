@@ -1,4 +1,17 @@
 ---
+- name: "homepage | Query Portainer local environment ID"
+  ansible.builtin.uri:
+    url: "http://{{ docker_host_ip }}:9000/api/endpoints"
+    method: GET
+    headers:
+      X-API-Key: "{{ portainer_api_key }}"
+    return_content: true
+  register: portainer_endpoints
+
+- name: "homepage | Set Portainer local environment ID"
+  ansible.builtin.set_fact:
+    portainer_local_env_id: "{{ (portainer_endpoints.json | selectattr('Name', 'equalto', 'local') | first).Id }}"
+
 - name: "homepage | Ensure config directory exists"
   ansible.builtin.file:
     path: /srv/data/homepage/config

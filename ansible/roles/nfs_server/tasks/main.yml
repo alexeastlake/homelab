@@ -25,6 +25,14 @@
     recurse: true
   loop: "{{ enabled_stacks }}"
 
+- name: Create shared data directories
+  ansible.builtin.file:
+    path: "/srv/data/{{ item }}"
+    state: directory
+    mode: "0777"
+  loop:
+    - storage
+
 - name: Configure NFS exports
   ansible.builtin.template:
     src: exports.j2

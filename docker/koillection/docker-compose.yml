@@ -27,7 +27,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     volumes:
-      - /srv/data/koillection/db:/var/lib/postgresql/data
+      - /var/lib/docker-data/koillection/db:/var/lib/postgresql/data
 
 networks:
   koillection-internal:
