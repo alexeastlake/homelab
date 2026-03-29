@@ -17,7 +17,7 @@ mkdir -p "${BACKUP_DIR}"
 {% for target in docker_data_pg_targets %}
 echo "Dumping {{ target.container }} ({{ target.dbname }})..."
 mkdir -p "${BACKUP_DIR}/{{ target.stack }}"
-docker exec {{ target.container }} pg_dump -U {{ target.user }} {{ target.dbname }} \
+docker exec -e PGPASSWORD='{{ target.password }}' {{ target.container }} pg_dump -U {{ target.user }} {{ target.dbname }} \
     | gzip > "${BACKUP_DIR}/{{ target.stack }}/{{ target.dbname }}.sql.gz"
 {% endfor %}
 

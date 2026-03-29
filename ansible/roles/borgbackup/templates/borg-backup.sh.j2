@@ -28,4 +28,11 @@ borg prune \
     --keep-weekly {{ borg_keep_weekly }} \
     --keep-monthly {{ borg_keep_monthly }}
 
+# Export latest archive as a tar for easy grabbing
+EXPORT_DIR="/srv/backup/latest"
+mkdir -p "${EXPORT_DIR}"
+rm -f "${EXPORT_DIR}/latest.tar.gz"
+borg export-tar "${BORG_REPO}::${ARCHIVE}" "${EXPORT_DIR}/latest.tar.gz"
+echo "Latest backup exported to ${EXPORT_DIR}/latest.tar.gz"
+
 echo "=== Borg backup completed: $(date) ==="

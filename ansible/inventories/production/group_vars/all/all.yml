@@ -101,10 +101,12 @@ docker_data_pg_targets:
   - stack: adventurelog
     container: adventurelog-db
     user: "{{ adventurelog_db_user }}"
+    password: "{{ adventurelog_db_password }}"
     dbname: database
   - stack: koillection
     container: koillection-db
     user: koillection
+    password: "{{ koillection_db_password }}"
     dbname: koillection
 
 docker_data_rsync_dirs:
