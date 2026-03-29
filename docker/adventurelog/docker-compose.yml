@@ -19,7 +19,7 @@ services:
     networks:
       - adventurelog-internal
     volumes:
-      - /srv/data/adventurelog/data:/var/lib/postgresql/data/
+      - /var/lib/docker-data/adventurelog/db:/var/lib/postgresql/data/
 
   server:
     image: ghcr.io/seanmorley15/adventurelog-backend:latest
