@@ -9,13 +9,11 @@ ARCHIVE="{{ borg_archive_prefix }}-${HOSTNAME}-${TIMESTAMP}"
 
 echo "=== Borg backup started: $(date) ==="
 
-# Stop containers that lock files on NFS (SQLite, logs) to ensure clean backup.
+# Stop all containers to ensure consistent backup (SQLite/BoltDB lock files on NFS).
 # Containers are restarted after the archive is created, even if Borg fails.
-{% if borg_stop_containers is defined and borg_stop_containers %}
-echo "Stopping containers for consistent backup..."
-ssh root@{{ docker_host_ip }} "docker stop {{ borg_stop_containers | join(' ') }}"
-trap 'echo "Restarting containers..."; ssh root@{{ docker_host_ip }} "docker start {{ borg_stop_containers | join(' ') }}"' EXIT
-{% endif %}
+echo "Stopping all containers for consistent backup..."
+ssh root@{{ docker_host_ip }} "docker stop \$(docker ps -q)" || true
+trap 'echo "Restarting all containers..."; ssh root@{{ docker_host_ip }} "docker start \$(docker ps -a -q)" || true' EXIT
 
 # Create archive
 borg create \
