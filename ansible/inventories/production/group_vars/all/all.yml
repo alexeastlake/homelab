@@ -95,6 +95,21 @@ adventurelog_frontend_url: "{{ vault_adventurelog_frontend_url }}"
 
 koillection_db_password: "{{ vault_koillection_db_password }}"
 
+# Docker host local data backup to NFS (picked up by BorgBackup)
+# TODO: Remove when migrating to full VMs (data can live on NFS directly)
+docker_data_pg_targets:
+  - stack: adventurelog
+    container: adventurelog-db
+    user: "{{ adventurelog_db_user }}"
+    dbname: database
+  - stack: koillection
+    container: koillection-db
+    user: koillection
+    dbname: koillection
+
+docker_data_rsync_dirs:
+  - filebrowser
+
 # Homepage basic auth (Caddy)
 homepage_auth_user: "{{ vault_homepage_auth_user }}"
 homepage_auth_password_hash: "{{ vault_homepage_auth_password_hash }}"

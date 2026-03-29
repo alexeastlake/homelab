@@ -132,7 +132,7 @@ ansible-playbook site.yml
 2. **DNS** (CT101): `common` → `adguard`
 3. **Caddy** (CT102): `common` → `caddy`
 4. **Tunnel** (CT103): `common` → `cloudflared`
-5. **Docker Host** (CT104): `common` → `docker` → `stacks`
+5. **Docker Host** (CT104): `common` → `docker` → `stacks` → `docker_data_backup`
 
 #### Key role details:
 
@@ -144,6 +144,7 @@ ansible-playbook site.yml
 - **cloudflared** — apt install, templated systemd service with tunnel token from vault
 - **docker** — Docker CE + compose plugin from Docker's apt repo
 - **stacks** — creates base dirs, syncs compose files, templates .env and config files, deploys all services
+- **docker_data_backup** — daily sync of Docker host local data to NFS for BorgBackup (workaround for chown failures on NFS)
 
 ### 4. Restore Data (if migrating)
 
@@ -177,7 +178,10 @@ See `vault.yml.example` and `terraform.tfvars.example` for all required variable
 
 ## Backups
 
-- **BorgBackup** — daily at 14:00 NZDT, backs up `/srv/data/` with 7 daily / 4 weekly / 6 monthly retention. Stored at `/srv/backup/borg` on the storage LXC (CT100).
+Some services (PostgreSQL, FileBrowser) store data on the Docker host's local disk (`/var/lib/docker-data/`) because they need `chown`, which fails on NFS bind mounts in unprivileged LXCs. This data is synced to NFS daily so BorgBackup can pick it up. This workaround goes away when migrating to full VMs.
+
+1. **`docker_data_backup`** (Docker Host, daily 13:00 NZDT) — `pg_dump` for PostgreSQL databases + `rsync` for file-based data → `/srv/data/docker-data/`
+2. **BorgBackup** (Storage LXC, daily 14:00 NZDT) — archives all of `/srv/data/` (including synced data from step 1) with 7 daily / 4 weekly / 6 monthly retention → `/srv/backup/borg`
 
 Note: Backups are currently on the same disk. Off-site/off-disk backup target is planned.
 

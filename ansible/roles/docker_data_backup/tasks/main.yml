@@ -1,0 +1,19 @@
+---
+# Workaround: PostgreSQL and some apps need chown, which fails on NFS bind mounts
+# in unprivileged LXCs. Their data lives on the Docker host's local disk instead.
+# This role syncs that data to NFS daily so BorgBackup can pick it up.
+# TODO: Remove this role when migrating to full VMs (proper UID mapping = no chown issue)
+
+- name: Template docker-data backup script
+  ansible.builtin.template:
+    src: docker-data-backup.sh.j2
+    dest: /usr/local/bin/docker-data-backup.sh
+    mode: "0755"
+
+- name: Configure daily docker-data backup cron job
+  ansible.builtin.cron:
+    name: "docker-data backup to NFS"
+    minute: "0"
+    hour: "13"
+    job: "/usr/local/bin/docker-data-backup.sh >> /var/log/docker-data-backup.log 2>&1"
+    user: root
