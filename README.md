@@ -161,7 +161,7 @@ ansible-playbook site.yml
 
 - **AdGuard:** DNS rewrites are IaC-managed via Ansible template. Filter lists and other UI settings are manual.
 - **Uptime Kuma:** Create monitors and status pages via the UI. Config persists in `/srv/data/uptime-kuma/`.
-- **Portainer:** Generate an API key (My Account → Access tokens) and add it to the vault as `vault_portainer_api_key`.
+- **Portainer:** Generate an API key (My Account → Access tokens) and add it to the vault as `vault_portainer_api_key`. Used by the Homepage dashboard widget to display container stats.
 - **Homepage:** Proxmox API token must be created manually in the Proxmox UI (Datacenter → Permissions → API Tokens) and added to the vault.
 - **Caddy root CA:** The root CA cert/key are stored in Ansible vault and deployed by the caddy role. Install the root cert on your devices to trust internal HTTPS certs. The vault values must use YAML block scalar (`|`) to preserve PEM newlines.
 
