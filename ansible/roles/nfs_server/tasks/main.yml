@@ -22,8 +22,14 @@
     path: "/srv/data/{{ item }}"
     state: directory
     mode: "0777"
-    recurse: true
   loop: "{{ enabled_stacks }}"
+
+- name: Create stack subdirectories for Docker volume mounts
+  ansible.builtin.file:
+    path: "/srv/data/{{ item }}"
+    state: directory
+    mode: "0777"
+  loop: "{{ nfs_stack_subdirs }}"
 
 - name: Create shared data directories
   ansible.builtin.file:

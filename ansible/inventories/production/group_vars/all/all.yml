@@ -95,6 +95,24 @@ adventurelog_frontend_url: "{{ vault_adventurelog_frontend_url }}"
 
 koillection_db_password: "{{ vault_koillection_db_password }}"
 
+# NFS subdirectories required by Docker volume mounts.
+# The NFS server role pre-creates these with 0777 so Docker doesn't fail
+# in unprivileged LXCs. TODO: Remove when migrating to full VMs.
+nfs_stack_subdirs:
+  - adventurelog/media
+  - grampsweb/users
+  - grampsweb/indexdir
+  - grampsweb/thumbnail_cache
+  - grampsweb/cache
+  - grampsweb/secret
+  - grampsweb/grampsdb
+  - grampsweb/media
+  - grampsweb/tmp
+  - homepage/config
+  - koillection/uploads
+  - portainer/data
+  - uptime-kuma/data
+
 # Docker host local data backup to NFS (picked up by BorgBackup)
 # TODO: Remove when migrating to full VMs (data can live on NFS directly)
 docker_data_pg_targets:
