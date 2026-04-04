@@ -34,40 +34,35 @@ else
 fi
 
 # --- Prune old backups ---
-# Keep: {{ borg_keep_daily }} daily, {{ borg_keep_weekly }} weekly, {{ borg_keep_monthly }} monthly
+# Uses the same retention as borg: {{ borg_keep_daily }} daily, {{ borg_keep_weekly }} weekly, {{ borg_keep_monthly }} monthly.
+# Builds a list of dates to keep, then removes everything else.
 echo "Pruning old backups..."
 
-KEEP_DAILY={{ borg_keep_daily }}
-KEEP_WEEKLY={{ borg_keep_weekly }}
-KEEP_MONTHLY={{ borg_keep_monthly }}
-
-# Build list of dates to keep
 KEEP_DATES=$(mktemp)
 
-# Keep last N daily
-for i in $(seq 0 $((KEEP_DAILY - 1))); do
-    date -d "${TODAY} -${i} days" +%Y-%m-%d 2>/dev/null >> "${KEEP_DATES}" || true
+# Keep last N daily backups
+for i in $(seq 0 $(( {{ borg_keep_daily }} - 1 ))); do
+    date -d "${TODAY} -${i} days" +%Y-%m-%d >> "${KEEP_DATES}" 2>/dev/null || true
 done
 
-# Keep last N weekly (most recent backup from each of the last N weeks)
-for i in $(seq 1 ${KEEP_WEEKLY}); do
-    WEEK_START=$(date -d "${TODAY} -$((i * 7)) days" +%Y-%m-%d 2>/dev/null) || true
-    WEEK_END=$(date -d "${TODAY} -$(((i - 1) * 7 + 1)) days" +%Y-%m-%d 2>/dev/null) || true
-    # Find the newest backup in this week range
-    for f in "${BACKUP_DIR}"/${PREFIX}-*.tar.gz; do
-        [ -f "$f" ] || continue
+# Keep one backup per week for the last N weeks
+for i in $(seq 1 {{ borg_keep_weekly }}); do
+    WEEK_START=$(date -d "${TODAY} -$((i * 7)) days" +%Y-%m-%d 2>/dev/null) || continue
+    WEEK_END=$(date -d "${TODAY} -$(((i - 1) * 7 + 1)) days" +%Y-%m-%d 2>/dev/null) || continue
+    # Find newest backup in this week range
+    for f in $(ls -r "${BACKUP_DIR}"/${PREFIX}-*.tar.gz 2>/dev/null); do
         FILE_DATE=$(basename "$f" | sed "s/${PREFIX}-//" | sed 's/\.tar\.gz//')
-        if [[ "${FILE_DATE}" >= "${WEEK_START}" && "${FILE_DATE}" <= "${WEEK_END}" ]]; then
+        if [[ "${FILE_DATE}" > "${WEEK_START}" || "${FILE_DATE}" == "${WEEK_START}" ]] \
+        && [[ "${FILE_DATE}" < "${WEEK_END}" || "${FILE_DATE}" == "${WEEK_END}" ]]; then
             echo "${FILE_DATE}" >> "${KEEP_DATES}"
             break
         fi
     done
 done
 
-# Keep last N monthly (most recent backup from each of the last N months)
-for i in $(seq 1 ${KEEP_MONTHLY}); do
-    TARGET_MONTH=$(date -d "${TODAY} -${i} months" +%Y-%m 2>/dev/null) || true
-    # Find the newest backup in this month
+# Keep one backup per month for the last N months
+for i in $(seq 1 {{ borg_keep_monthly }}); do
+    TARGET_MONTH=$(date -d "${TODAY} -${i} months" +%Y-%m 2>/dev/null) || continue
     for f in $(ls -r "${BACKUP_DIR}"/${PREFIX}-${TARGET_MONTH}-*.tar.gz 2>/dev/null); do
         FILE_DATE=$(basename "$f" | sed "s/${PREFIX}-//" | sed 's/\.tar\.gz//')
         echo "${FILE_DATE}" >> "${KEEP_DATES}"
