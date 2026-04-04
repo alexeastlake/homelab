@@ -112,6 +112,15 @@ docker_data_pg_targets:
 docker_data_rsync_dirs:
   - filebrowser
 
+# External backup sync (runs on Proxmox host)
+# To repoint to different storage: change the mount in pve-bootstrap.sh
+# and update these paths. The script checks mountpoint before running.
+backup_sync_mount: /mnt/usb
+backup_sync_dir: "{{ backup_sync_mount }}/Homelab/Backups"
+backup_sync_source: /mnt/nfs-backups/latest/latest.tar.gz
+backup_sync_cron_hour: "3"
+backup_sync_cron_minute: "0"
+
 # Homepage basic auth (Caddy)
 homepage_auth_user: "{{ vault_homepage_auth_user }}"
 homepage_auth_password_hash: "{{ vault_homepage_auth_password_hash }}"

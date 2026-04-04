@@ -1,0 +1,14 @@
+---
+- name: Template backup sync script
+  ansible.builtin.template:
+    src: backup-sync.sh.j2
+    dest: /usr/local/bin/backup-sync.sh
+    mode: "0755"
+
+- name: Configure backup sync cron job
+  ansible.builtin.cron:
+    name: "backup sync to external storage"
+    minute: "{{ backup_sync_cron_minute }}"
+    hour: "{{ backup_sync_cron_hour }}"
+    job: "/usr/local/bin/backup-sync.sh >> /var/log/backup-sync.log 2>&1"
+    user: root
