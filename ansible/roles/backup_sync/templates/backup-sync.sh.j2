@@ -1,0 +1,85 @@
+#!/bin/bash
+set -euo pipefail
+
+MOUNT="{{ backup_sync_mount }}"
+BACKUP_DIR="{{ backup_sync_dir }}"
+SOURCE="{{ backup_sync_source }}"
+PREFIX="{{ borg_archive_prefix }}"
+TODAY=$(date +%Y-%m-%d)
+
+echo "=== Backup sync started: $(date) ==="
+
+# Exit cleanly if external storage is not mounted
+if ! mountpoint -q "${MOUNT}"; then
+    echo "External storage not mounted at ${MOUNT}, skipping."
+    exit 0
+fi
+
+# Exit cleanly if source backup does not exist
+if [ ! -f "${SOURCE}" ]; then
+    echo "Source backup not found at ${SOURCE}, skipping."
+    exit 0
+fi
+
+# Ensure backup directory exists
+mkdir -p "${BACKUP_DIR}"
+
+# Copy today's backup (skip if already exists)
+DEST="${BACKUP_DIR}/${PREFIX}-${TODAY}.tar.gz"
+if [ -f "${DEST}" ]; then
+    echo "Today's backup already exists: ${DEST}"
+else
+    cp "${SOURCE}" "${DEST}"
+    echo "Copied backup to ${DEST}"
+fi
+
+# --- Prune old backups ---
+# Uses the same retention as borg: {{ borg_keep_daily }} daily, {{ borg_keep_weekly }} weekly, {{ borg_keep_monthly }} monthly.
+# Builds a list of dates to keep, then removes everything else.
+echo "Pruning old backups..."
+
+KEEP_DATES=$(mktemp)
+
+# Keep last N daily backups
+for i in $(seq 0 $(( {{ borg_keep_daily }} - 1 ))); do
+    date -d "${TODAY} -${i} days" +%Y-%m-%d >> "${KEEP_DATES}" 2>/dev/null || true
+done
+
+# Keep one backup per week for the last N weeks
+for i in $(seq 1 {{ borg_keep_weekly }}); do
+    WEEK_START=$(date -d "${TODAY} -$((i * 7)) days" +%Y-%m-%d 2>/dev/null) || continue
+    WEEK_END=$(date -d "${TODAY} -$(((i - 1) * 7 + 1)) days" +%Y-%m-%d 2>/dev/null) || continue
+    # Find newest backup in this week range
+    for f in $(ls -r "${BACKUP_DIR}"/${PREFIX}-*.tar.gz 2>/dev/null); do
+        FILE_DATE=$(basename "$f" | sed "s/${PREFIX}-//" | sed 's/\.tar\.gz//')
+        if [[ "${FILE_DATE}" > "${WEEK_START}" || "${FILE_DATE}" == "${WEEK_START}" ]] \
+        && [[ "${FILE_DATE}" < "${WEEK_END}" || "${FILE_DATE}" == "${WEEK_END}" ]]; then
+            echo "${FILE_DATE}" >> "${KEEP_DATES}"
+            break
+        fi
+    done
+done
+
+# Keep one backup per month for the last N months
+for i in $(seq 1 {{ borg_keep_monthly }}); do
+    TARGET_MONTH=$(date -d "${TODAY} -${i} months" +%Y-%m 2>/dev/null) || continue
+    for f in $(ls -r "${BACKUP_DIR}"/${PREFIX}-${TARGET_MONTH}-*.tar.gz 2>/dev/null); do
+        FILE_DATE=$(basename "$f" | sed "s/${PREFIX}-//" | sed 's/\.tar\.gz//')
+        echo "${FILE_DATE}" >> "${KEEP_DATES}"
+        break
+    done
+done
+
+# Remove backups not in keep list
+for f in "${BACKUP_DIR}"/${PREFIX}-*.tar.gz; do
+    [ -f "$f" ] || continue
+    FILE_DATE=$(basename "$f" | sed "s/${PREFIX}-//" | sed 's/\.tar\.gz//')
+    if ! grep -qxF "${FILE_DATE}" "${KEEP_DATES}"; then
+        rm -f "$f"
+        echo "Pruned: $(basename "$f")"
+    fi
+done
+
+rm -f "${KEEP_DATES}"
+
+echo "=== Backup sync completed: $(date) ==="

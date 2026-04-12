@@ -43,6 +43,13 @@ mkdir -p /mnt/nfs-data /mnt/nfs-backups
 grep -q '/mnt/nfs-data' /etc/fstab || echo '10.10.10.10:/srv/data /mnt/nfs-data nfs rw,sync,hard,intr 0 0' >> /etc/fstab
 grep -q '/mnt/nfs-backups' /etc/fstab || echo '10.10.10.10:/srv/backup /mnt/nfs-backups nfs ro,sync,hard,intr 0 0' >> /etc/fstab
 
+# --- External backup storage ---
+# To repoint to different storage (NAS, different drive), replace this fstab line
+# and update backup_sync_mount/backup_sync_dir in ansible group_vars.
+echo "Configuring external backup storage mount..."
+mkdir -p /mnt/usb
+grep -q '/mnt/usb' /etc/fstab || echo 'UUID=5C6E-31A7 /mnt/usb exfat defaults,nofail,uid=0,gid=0,umask=000 0 0' >> /etc/fstab
+
 # --- LXC template ---
 echo "Ensuring Debian 12 LXC template is available..."
 pveam update -qq 2>/dev/null || true
