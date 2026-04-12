@@ -44,11 +44,9 @@ grep -q '/mnt/nfs-data' /etc/fstab || echo '10.10.10.10:/srv/data /mnt/nfs-data 
 grep -q '/mnt/nfs-backups' /etc/fstab || echo '10.10.10.10:/srv/backup /mnt/nfs-backups nfs ro,sync,hard,intr 0 0' >> /etc/fstab
 
 # --- External backup storage ---
-# To repoint to different storage (NAS, different drive), replace this fstab line
-# and update backup_sync_mount/backup_sync_dir in ansible group_vars.
-echo "Configuring external backup storage mount..."
+# Mount point only — the fstab entry is hardware-specific (see manual steps below).
+echo "Configuring external backup storage mount point..."
 mkdir -p /mnt/usb
-grep -q '/mnt/usb' /etc/fstab || echo 'UUID=5C6E-31A7 /mnt/usb exfat defaults,nofail,uid=0,gid=0,umask=000 0 0' >> /etc/fstab
 
 # --- LXC template ---
 echo "Ensuring Debian 12 LXC template is available..."
@@ -91,10 +89,14 @@ Manual steps remaining:
        post-up echo 1 > /proc/sys/net/ipv4/ip_forward
        post-down iptables -t nat -D POSTROUTING -s 10.10.10.0/24 -o wlp2s0 -j MASQUERADE
 
-2. Reboot, then continue with:
+2. Add external backup storage to /etc/fstab (find UUID with blkid):
+   echo 'UUID=<YOUR-USB-UUID> /mnt/usb exfat defaults,nofail,uid=0,gid=0,umask=000 0 0' >> /etc/fstab
+   Update backup_sync_mount/backup_sync_dir in ansible group_vars if changing the mount path.
+
+3. Reboot, then continue with:
    cd terraform && terraform apply
    cd ansible && ansible-playbook site.yml
 
-3. Mount NFS (after storage LXC is created):
+4. Mount NFS (after storage LXC is created):
    mount -a
 MSG

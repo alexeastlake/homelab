@@ -208,6 +208,17 @@ Note: Backups are currently on the same disk. Off-site/off-disk backup target is
 | CT103 Tunnel | 2 cores | 512MB | 2GB |
 | CT104 Docker | 4 cores | 4GB | 24GB |
 
+## Development
+
+Secret scanning is enforced via a [gitleaks](https://github.com/gitleaks/gitleaks) pre-commit hook. Install it once after cloning:
+
+```bash
+pip install pre-commit          # or: brew install pre-commit
+python -m pre_commit install    # or: pre-commit install (if on PATH)
+```
+
+Every `git commit` will now be scanned for accidentally staged secrets.
+
 ## Future Plans
 
 - Migrate to better hardware with ethernet (remove WiFi NAT, use direct bridge)
