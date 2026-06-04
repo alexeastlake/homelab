@@ -1,0 +1,40 @@
+---
+- name: Install Samba
+  ansible.builtin.apt:
+    name: samba
+    state: present
+
+- name: Configure Samba
+  ansible.builtin.template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    mode: "0644"
+    validate: testparm -s %s
+  notify: restart samba
+
+- name: Create Samba system user
+  ansible.builtin.user:
+    name: "{{ samba_user }}"
+    shell: /usr/sbin/nologin
+    create_home: false
+    system: true
+
+- name: Check existing Samba users
+  ansible.builtin.command: pdbedit -L
+  register: samba_existing_users
+  changed_when: false
+
+# smbpasswd is not idempotent, so only set the password when the user is
+# absent from the Samba database. To rotate the password later, delete the
+# user first: smbpasswd -x {{ samba_user }}
+- name: Set Samba password
+  ansible.builtin.shell:
+    cmd: "(echo '{{ samba_password }}'; echo '{{ samba_password }}') | smbpasswd -s -a {{ samba_user }}"
+  when: samba_user not in samba_existing_users.stdout
+  no_log: true
+
+- name: Ensure Samba is enabled and running
+  ansible.builtin.systemd:
+    name: smbd
+    state: started
+    enabled: true
