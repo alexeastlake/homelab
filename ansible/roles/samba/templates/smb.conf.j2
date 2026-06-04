@@ -16,8 +16,8 @@
    log file = /var/log/samba/%m.log
    max log size = 1000
 
-[storage]
-   path = /srv/data/storage
+[{{ samba_share_name }}]
+   path = {{ samba_share_path }}
    browseable = yes
    read only = no
    valid users = {{ samba_user }}
