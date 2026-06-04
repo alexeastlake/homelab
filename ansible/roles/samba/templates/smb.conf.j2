@@ -1,0 +1,29 @@
+# Samba config managed by Ansible
+[global]
+   workgroup = WORKGROUP
+   server string = Homelab Storage
+   security = user
+   map to guest = never
+
+   # Restrict to the private LXC subnet only -- never exposed to the internet.
+   # Remote access comes via the Cloudflare WARP route (10.10.10.0/24), which
+   # places the client on this subnet rather than publishing SMB outward.
+   bind interfaces only = yes
+   interfaces = lo {{ samba_interface }}
+   hosts allow = {{ nfs_allowed_network }} 127.0.0.1
+   hosts deny = 0.0.0.0/0
+
+   log file = /var/log/samba/%m.log
+   max log size = 1000
+
+[{{ samba_share_name }}]
+   path = {{ samba_share_path }}
+   browseable = yes
+   read only = no
+   valid users = {{ samba_user }}
+   # Files in /srv/data are root-owned with 0777, matching the NFS/LXC setup.
+   # TODO: Replace force user with proper UID mapping when migrating to full VMs.
+   force user = root
+   force group = root
+   create mask = 0664
+   directory mask = 0775

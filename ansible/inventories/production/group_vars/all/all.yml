@@ -12,11 +12,20 @@ homelab_repo_path: /opt/homelab
 docker_compose_dir: "{{ homelab_repo_path }}/docker"
 
 # NFS
-nfs_server_ip: 10.10.10.10
 nfs_allowed_network: "10.10.10.0/24"
+
+# Samba (SMB share for Windows clients -- bound to nfs_allowed_network only)
+samba_user: "{{ vault_samba_user }}"
+samba_password: "{{ vault_samba_password }}"
+samba_interface: eth0
+samba_share_name: storage
+samba_share_path: /srv/data/storage
 
 # Docker host IP (used for Caddy upstreams)
 docker_host_ip: 10.10.10.50
+
+# Reverse proxy IP (Caddy)
+caddy_ip: 10.10.10.30
 
 # Docker stacks to deploy (order matters -- infra first)
 enabled_stacks:
@@ -59,8 +68,8 @@ adguard_admin_password: "{{ vault_adguard_admin_password }}"
 adguard_admin_password_hash: "{{ vault_adguard_admin_password_hash }}"
 
 adguard_dns_rewrites:
-  - { domain: "*.alexserver.home.arpa", answer: "10.10.10.30" }
-  - { domain: "alexserver.home.arpa", answer: "10.10.10.30" }
+  - { domain: "*.{{ domain }}", answer: "{{ caddy_ip }}" }
+  - { domain: "{{ domain }}", answer: "{{ caddy_ip }}" }
 
 # Homepage widget secrets
 proxmox_api_token_id: "{{ vault_proxmox_api_token_id }}"

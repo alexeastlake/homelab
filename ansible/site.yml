@@ -6,6 +6,7 @@
   roles:
     - common
     - nfs_server
+    - samba
     - borgbackup
 
 # --- Networking: DNS ---
