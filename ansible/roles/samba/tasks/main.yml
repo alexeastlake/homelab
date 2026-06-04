@@ -1,7 +1,9 @@
 ---
 - name: Install Samba
   ansible.builtin.apt:
-    name: samba
+    name:
+      - samba
+      - smbclient
     state: present
 
 - name: Configure Samba
@@ -19,22 +21,27 @@
     create_home: false
     system: true
 
-- name: Check existing Samba users
-  ansible.builtin.command: pdbedit -L
-  register: samba_existing_users
-  changed_when: false
-
-# smbpasswd is not idempotent, so only set the password when the user is
-# absent from the Samba database. To rotate the password later, delete the
-# user first: smbpasswd -x {{ samba_user }}
-- name: Set Samba password
-  ansible.builtin.shell:
-    cmd: "(echo '{{ samba_password }}'; echo '{{ samba_password }}') | smbpasswd -s -a {{ samba_user }}"
-  when: samba_user not in samba_existing_users.stdout
-  no_log: true
-
 - name: Ensure Samba is enabled and running
   ansible.builtin.systemd:
     name: smbd
     state: started
     enabled: true
+
+- name: Apply any pending config changes before the password check
+  ansible.builtin.meta: flush_handlers
+
+# smbpasswd can't read back a password to compare, so we test whether the
+# vault password already authenticates and only re-set it when it doesn't.
+# This makes the password declarative: change it in the vault, re-run, done.
+- name: Check whether the Samba password is already current
+  ansible.builtin.command: smbclient -L //localhost -U {{ samba_user }}%{{ samba_password }}
+  register: samba_auth
+  changed_when: false
+  failed_when: false
+  no_log: true
+
+- name: Set Samba password
+  ansible.builtin.shell:
+    cmd: "(echo '{{ samba_password }}'; echo '{{ samba_password }}') | smbpasswd -s -a {{ samba_user }}"
+  when: samba_auth.rc != 0
+  no_log: true
