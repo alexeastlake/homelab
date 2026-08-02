@@ -1,6 +1,6 @@
 services:
   web:
-    image: ghcr.io/seanmorley15/adventurelog-frontend:latest
+    image: ghcr.io/seanmorley15/adventurelog-frontend:v0.12.0@sha256:3b0ec1f34461a278a8ae0341f5bb47949783a02f7a55f8f9d0940d4e07d3241d
     container_name: adventurelog-frontend
     restart: unless-stopped
     env_file: .env
@@ -12,7 +12,7 @@ services:
       - server
 
   db:
-    image: postgis/postgis:16-3.5
+    image: postgis/postgis:16-3.5@sha256:a70af4b1c6b78c13c0ea4c73a861b200a8fa8b0729a1becb5ceed2573a2292d7
     container_name: adventurelog-db
     restart: unless-stopped
     env_file: .env
@@ -22,7 +22,7 @@ services:
       - /var/lib/docker-data/adventurelog/db:/var/lib/postgresql/data/
 
   server:
-    image: ghcr.io/seanmorley15/adventurelog-backend:latest
+    image: ghcr.io/seanmorley15/adventurelog-backend:v0.12.0@sha256:6cb8442a3e0ecb69dd390435f3a8af450d7b3456487924671bf74fb60d16b3a1
     container_name: adventurelog-backend
     restart: unless-stopped
     env_file: .env

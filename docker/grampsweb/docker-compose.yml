@@ -1,6 +1,6 @@
 services:
   grampsweb: &grampsweb
-    image: ghcr.io/gramps-project/grampsweb:latest
+    image: ghcr.io/gramps-project/grampsweb:latest@sha256:1b806d19dc993513e0e79bbe8ba586bef9ee9b8ab23182efd88e0f4e6337bf17
     container_name: grampsweb
     restart: unless-stopped
     ports:
@@ -34,7 +34,7 @@ services:
     command: celery -A gramps_webapi.celery worker --loglevel=INFO --concurrency=2
 
   grampsweb_redis:
-    image: docker.io/library/redis:7.2.4-alpine
+    image: docker.io/library/redis:7.2.4-alpine@sha256:c8bb255c3559b3e458766db810aa7b3c7af1235b204cfdb304e79ff388fe1a5a
     container_name: grampsweb_redis
     networks:
       - grampsweb-internal

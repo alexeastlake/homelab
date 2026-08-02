@@ -30,7 +30,8 @@ Proxmox VE (laptop, 192.168.68.14 via WiFi)
     ├── Portainer       container management
     ├── Uptime Kuma     uptime monitoring
     ├── Homepage        dashboard (Caddy basic auth)
-    └── FileBrowser     web file manager
+    ├── FileBrowser     web file manager
+    └── PrintDeck       3D printer dashboard (Moonraker)
 ```
 
 ### Networking
@@ -47,6 +48,48 @@ Device (WARP) → Cloudflare → Tunnel (CT103) → 10.10.10.0/24
   DNS:    *.alexserver.home.arpa → AdGuard (10.10.10.20:53) → 10.10.10.30
   HTTPS:  browser → Caddy (10.10.10.30:443) → Docker Host (10.10.10.50:<port>)
 ```
+
+## Accessing the Homelab
+
+### Web services
+
+All web services are reached at `https://<service>.alexserver.home.arpa` (routed by Caddy on CT102). This works from any device that is:
+
+1. **On the LAN** (`10.10.10.0/24`) directly, or
+2. **Enrolled in the Cloudflare WARP** Zero Trust profile (by email), which routes `10.10.10.0/24` through the tunnel and resolves `*.alexserver.home.arpa` via AdGuard.
+
+To trust the internal HTTPS certs without browser warnings, install the Caddy root CA cert (stored in the Ansible vault) on the device. See the Post-Deploy notes.
+
+Hostnames are defined by `caddy_sites` in `group_vars`:
+
+| Service | URL |
+|---|---|
+| Homepage (dashboard, basic auth) | `https://homepage.alexserver.home.arpa` |
+| Portainer | `https://portainer.alexserver.home.arpa` |
+| Uptime Kuma | `https://uptime-kuma.alexserver.home.arpa` |
+| FileBrowser | `https://filebrowser.alexserver.home.arpa` |
+| PrintDeck (3D printers) | `https://printdeck.alexserver.home.arpa` |
+| AdventureLog | `https://adventurelog.alexserver.home.arpa` |
+| Gramps Web | `https://grampsweb.alexserver.home.arpa` |
+| Koillection | `https://koillection.alexserver.home.arpa` |
+| AdGuard Home (admin) | `https://adguard.alexserver.home.arpa` |
+| Proxmox VE | `https://pve.alexserver.home.arpa` |
+
+### Storage share (SMB / Samba)
+
+The `storage` share on CT100 (`/srv/data/storage`) is exposed over SMB for direct file access from desktop clients. It is **authenticated** (`security = user`, no guest access) and bound only to the private `10.10.10.0/24` subnet — never published to the internet. Remote clients reach it via the WARP route, same as web services.
+
+Credentials are the Samba user from the vault (`vault_samba_user` / `vault_samba_password`).
+
+**Windows (mapped drive):**
+
+```
+net use Z: \\10.10.10.10\storage /user:<samba_user> /persistent:yes
+```
+
+> **Note — "These files might be harmful to your computer" warning.** Windows treats a UNC path with a **dotted IP address** (`\\10.10.10.10\...`) as the *Internet* security zone, which triggers this prompt and the "Open File - Security Warning" on executables. To stop it, add the server to the **Local Intranet** zone: `inetcpl.cpl` → *Security* → *Local intranet* → *Sites* → *Advanced* → add `file://10.10.10.10`. Alternatively, reach the share by a NetBIOS hostname (no dots), which Windows places in the Intranet zone automatically. This is a Windows client setting, not a Samba config issue — left un-codified by design.
+
+**macOS / Linux:** connect to `smb://10.10.10.10/storage` (Finder: ⌘K) or mount with `mount -t cifs //10.10.10.10/storage /mnt/storage -o username=<samba_user>`.
 
 ## Prerequisites
 

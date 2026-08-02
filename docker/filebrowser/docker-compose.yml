@@ -1,6 +1,6 @@
 services:
   filebrowser:
-    image: filebrowser/filebrowser:latest
+    image: filebrowser/filebrowser:2.62.2@sha256:d01ee49248ef1d2a26616bc11c196b1768e2a2b67040ff085c8ffd35c037d123
     container_name: filebrowser
     volumes:
       - /srv/data/storage:/srv

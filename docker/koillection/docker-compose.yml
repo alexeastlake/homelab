@@ -1,6 +1,6 @@
 services:
   koillection:
-    image: koillection/koillection:latest
+    image: koillection/koillection:v1.11.1@sha256:22657fe06bccac4507da01b0e745d78dd4054a1443217a5f284a9c52005e660d
     container_name: koillection
     restart: unless-stopped
     ports:
@@ -15,7 +15,7 @@ services:
       - /srv/data/koillection/uploads:/uploads
 
   db:
-    image: postgres:16
+    image: postgres:16@sha256:2586e2a95d1c9b31cb2967feb562948f7d364854453d703039b6efa45fe48417
     container_name: koillection-db
     restart: unless-stopped
     networks:

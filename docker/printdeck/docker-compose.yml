@@ -1,0 +1,13 @@
+services:
+  printdeck:
+    image: ghcr.io/alexeastlake/printdeck:0.1.0
+    container_name: printdeck
+    restart: unless-stopped
+    env_file: .env
+    # Registry lives on a mounted data dir so UI edits (printer IP/name) persist.
+    environment:
+      - PRINTDECK_PRINTERS=/data/printers.yaml
+    volumes:
+      - /srv/data/printdeck:/data
+    ports:
+      - "8004:8000"

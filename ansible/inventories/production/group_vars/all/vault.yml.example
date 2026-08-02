@@ -22,6 +22,11 @@ vault_adventurelog_frontend_url: "http://localhost:8015"
 # Koillection
 vault_koillection_db_password: "change-me"
 
+# PrintDeck (3D printer dashboard) — built-in login + session cookie secret
+vault_printdeck_username: "admin"
+vault_printdeck_password: "change-me"
+vault_printdeck_secret: "change-me-long-random-string"
+
 # Samba (SMB share on the storage LXC)
 vault_samba_user: "admin"
 vault_samba_password: "change-me"

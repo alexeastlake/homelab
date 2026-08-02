@@ -36,12 +36,14 @@ enabled_stacks:
   - uptime-kuma
   - homepage
   - filebrowser
+  - printdeck
 
 # Stacks that require a templated .env file
 stacks_with_env:
   - adventurelog
   - homepage
   - koillection
+  - printdeck
 
 # Stacks that require templated config files
 stacks_with_config:
@@ -59,6 +61,7 @@ caddy_sites:
     basicauth_password_hash: "{{ homepage_auth_password_hash }}"
   - { hostname: koillection, upstream: "{{ docker_host_ip }}:8002" }
   - { hostname: portainer, upstream: "{{ docker_host_ip }}:9000" }
+  - { hostname: printdeck, upstream: "{{ docker_host_ip }}:8004" }
   - { hostname: uptime-kuma, upstream: "{{ docker_host_ip }}:3001" }
   - { hostname: pve, upstream: "10.10.10.1:8006", tls_upstream: true }
 
@@ -104,6 +107,10 @@ adventurelog_frontend_url: "{{ vault_adventurelog_frontend_url }}"
 
 koillection_db_password: "{{ vault_koillection_db_password }}"
 
+printdeck_username: "{{ vault_printdeck_username }}"
+printdeck_password: "{{ vault_printdeck_password }}"
+printdeck_secret: "{{ vault_printdeck_secret }}"
+
 # NFS subdirectories required by Docker volume mounts.
 # The NFS server role pre-creates these with 0777 so Docker doesn't fail
 # in unprivileged LXCs. TODO: Remove when migrating to full VMs.
@@ -120,6 +127,7 @@ nfs_stack_subdirs:
   - homepage/config
   - koillection/uploads
   - portainer/data
+  - printdeck
   - uptime-kuma/data
 
 # Docker host local data backup to NFS (picked up by BorgBackup)
