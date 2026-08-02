@@ -25,9 +25,6 @@ vault_koillection_db_password: "change-me"
 # PrintDeck (3D printer dashboard) — built-in login
 vault_printdeck_username: "admin"
 vault_printdeck_password: "change-me"
-# Optional: cookie-signing key. Omit it and PrintDeck generates a random one each
-# start (logins reset on restart). Set it only if you want sessions to persist.
-# vault_printdeck_secret: "change-me-long-random-string"
 
 # Samba (SMB share on the storage LXC)
 vault_samba_user: "admin"
