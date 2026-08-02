@@ -109,7 +109,9 @@ koillection_db_password: "{{ vault_koillection_db_password }}"
 
 printdeck_username: "{{ vault_printdeck_username }}"
 printdeck_password: "{{ vault_printdeck_password }}"
-printdeck_secret: "{{ vault_printdeck_secret }}"
+# Optional — leave the vault var unset to let PrintDeck generate a random cookie
+# key each start (logins just reset on restart). Set it to keep sessions alive.
+printdeck_secret: "{{ vault_printdeck_secret | default('') }}"
 
 # NFS subdirectories required by Docker volume mounts.
 # The NFS server role pre-creates these with 0777 so Docker doesn't fail
