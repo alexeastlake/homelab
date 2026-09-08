@@ -125,10 +125,11 @@ ansible-playbook site.yml
 #### Playbook execution order (`site.yml`):
 
 1. **Storage** (CT100): `common` → `nfs_server` → `samba` → `borgbackup`
-2. **DNS** (CT101): `common` → `adguard`
-3. **Caddy** (CT102): `common` → `caddy`
-4. **Tunnel** (CT103): `common` → `cloudflared`
-5. **Docker Host** (CT104): `common` → `docker` → `stacks` → `docker_data_backup`
+2. **PVE host**: `mount -a` (mounts NFS from CT100 so CT104's bind mount is live)
+3. **DNS** (CT101): `common` → `adguard`
+4. **Caddy** (CT102): `common` → `caddy`
+5. **Tunnel** (CT103): `common` → `cloudflared`
+6. **Docker Host** (CT104): `common` → `docker` → `stacks` → `docker_data_backup`
 
 #### Key role details:
 

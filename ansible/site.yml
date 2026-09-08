@@ -9,6 +9,15 @@
     - samba
     - borgbackup
 
+# --- PVE host: mount NFS from storage LXC ---
+- name: Mount NFS on PVE host
+  hosts: pve
+  become: true
+  tasks:
+    - name: Mount all fstab entries
+      ansible.builtin.command: mount -a
+      changed_when: false
+
 # --- Networking: DNS ---
 - name: Provision DNS server
   hosts: dns
