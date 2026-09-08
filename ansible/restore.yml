@@ -18,14 +18,16 @@
 
     - name: Terminate connections to AdventureLog database
       ansible.builtin.command: >
-        docker exec -u postgres adventurelog-db psql -c
+        docker exec -e PGPASSWORD={{ adventurelog_db_password }} adventurelog-db
+        psql -U {{ adventurelog_db_user }} -d postgres -c
         "SELECT pg_terminate_backend(pid) FROM pg_stat_activity
         WHERE datname = 'database' AND pid <> pg_backend_pid();"
       changed_when: false
 
     - name: Drop and recreate AdventureLog database
       ansible.builtin.command: >
-        docker exec -u postgres adventurelog-db psql
+        docker exec -e PGPASSWORD={{ adventurelog_db_password }} adventurelog-db
+        psql -U {{ adventurelog_db_user }} -d postgres
         -c "DROP DATABASE IF EXISTS database;"
         -c "CREATE DATABASE database OWNER {{ adventurelog_db_user }};"
       changed_when: true
@@ -33,7 +35,8 @@
     - name: Restore AdventureLog database
       ansible.builtin.shell: >
         gunzip -c /srv/data/docker-data/adventurelog/database.sql.gz
-        | docker exec -i adventurelog-db psql -U {{ adventurelog_db_user }} -d database
+        | docker exec -i -e PGPASSWORD={{ adventurelog_db_password }} adventurelog-db
+        psql -U {{ adventurelog_db_user }} -d database
       changed_when: true
 
     - name: Wait for Koillection Postgres to be ready
@@ -46,14 +49,16 @@
 
     - name: Terminate connections to Koillection database
       ansible.builtin.command: >
-        docker exec -u postgres koillection-db psql -c
+        docker exec -e PGPASSWORD={{ koillection_db_password }} koillection-db
+        psql -U koillection -d postgres -c
         "SELECT pg_terminate_backend(pid) FROM pg_stat_activity
         WHERE datname = 'koillection' AND pid <> pg_backend_pid();"
       changed_when: false
 
     - name: Drop and recreate Koillection database
       ansible.builtin.command: >
-        docker exec -u postgres koillection-db psql
+        docker exec -e PGPASSWORD={{ koillection_db_password }} koillection-db
+        psql -U koillection -d postgres
         -c "DROP DATABASE IF EXISTS koillection;"
         -c "CREATE DATABASE koillection OWNER koillection;"
       changed_when: true
@@ -61,7 +66,8 @@
     - name: Restore Koillection database
       ansible.builtin.shell: >
         gunzip -c /srv/data/docker-data/koillection/koillection.sql.gz
-        | docker exec -i koillection-db psql -U koillection -d koillection
+        | docker exec -i -e PGPASSWORD={{ koillection_db_password }} koillection-db
+        psql -U koillection -d koillection
       changed_when: true
 
     - name: Restart app containers to reconnect to restored databases
