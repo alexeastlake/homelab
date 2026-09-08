@@ -99,7 +99,7 @@ After Terraform creates the storage LXC and Ansible configures NFS exports:
 mount -a
 ```
 
-This mounts `/mnt/nfs-data` (read-write, used as bind mount for Docker host) and `/mnt/nfs-backups` (read-only, for grabbing backup archives).
+This mounts `/mnt/nfs-data` (read-write, used as bind mount for Docker host).
 
 ### 4. Ansible — Configure and Deploy
 
@@ -124,7 +124,7 @@ ansible-playbook site.yml
 
 #### Playbook execution order (`site.yml`):
 
-1. **Storage** (CT100): `common` → `nfs_server` → `borgbackup`
+1. **Storage** (CT100): `common` → `nfs_server` → `samba` → `borgbackup`
 2. **DNS** (CT101): `common` → `adguard`
 3. **Caddy** (CT102): `common` → `caddy`
 4. **Tunnel** (CT103): `common` → `cloudflared`
@@ -145,8 +145,7 @@ ansible-playbook site.yml
 ### 5. Restore Data (if migrating)
 
 ```bash
-# Latest backup is always available at /mnt/nfs-backups/latest/latest.tar.gz
-# Or copy a backup archive to the storage LXC:
+# Copy a backup archive to the storage LXC:
 scp backup.tar.gz root@10.10.10.10:/tmp/
 ssh root@10.10.10.10 tar xf /tmp/backup.tar.gz -C /
 ssh root@10.10.10.10 rm /tmp/backup.tar.gz
@@ -180,7 +179,7 @@ Some services (PostgreSQL, FileBrowser) store data on the Docker host's local di
 1. **`docker_data_backup`** (Docker Host, daily 01:00 NZDT) — `pg_dump` for PostgreSQL databases + `rsync` for file-based data → `/srv/data/docker-data/`
 2. **BorgBackup** (Storage LXC, daily 02:00 NZDT) — stops all Docker containers, archives `/srv/data/` (including synced data from step 1), restarts containers. Retention: 5 daily / 3 weekly / 3 monthly → `/srv/backup/borg`
 
-Latest backup is always available at `/srv/backup/latest/latest.tar.gz` (or `/mnt/nfs-backups/latest/latest.tar.gz` from the PVE host).
+Latest backup is always available at `/srv/backup/latest/latest.tar.gz` on the storage LXC.
 
 Note: Backups are currently on the same disk. Off-site/off-disk backup target is planned.
 
