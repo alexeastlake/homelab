@@ -1,0 +1,20 @@
+---
+# Manual backup trigger — runs the full backup chain on demand.
+# Usage: ansible-playbook backup.yml
+# Not part of site.yml — run explicitly when needed (e.g. before a rebuild).
+
+- name: Sync Docker host data to NFS
+  hosts: homelab
+  become: true
+  tasks:
+    - name: Run docker data backup (pg_dump + rsync to NFS)
+      ansible.builtin.command: /usr/local/bin/docker-data-backup.sh
+      changed_when: true
+
+- name: Run BorgBackup
+  hosts: storage
+  become: true
+  tasks:
+    - name: Run borg backup (archive NFS data + export tar)
+      ansible.builtin.command: /usr/local/bin/borg-backup.sh
+      changed_when: true
