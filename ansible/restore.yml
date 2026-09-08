@@ -70,6 +70,10 @@
         psql -U koillection -d koillection
       changed_when: true
 
+    - name: Restore FileBrowser data
+      ansible.builtin.command: rsync -a /srv/data/docker-data/filebrowser/ /var/lib/docker-data/filebrowser/
+      changed_when: true
+
     - name: Restart app containers to reconnect to restored databases
-      ansible.builtin.command: docker restart adventurelog-backend adventurelog-frontend koillection
+      ansible.builtin.command: docker restart adventurelog-backend adventurelog-frontend koillection filebrowser
       changed_when: true
