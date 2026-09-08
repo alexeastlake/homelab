@@ -18,14 +18,14 @@
 
     - name: Terminate connections to AdventureLog database
       ansible.builtin.command: >
-        docker exec adventurelog-db psql -U postgres -c
+        docker exec -u postgres adventurelog-db psql -c
         "SELECT pg_terminate_backend(pid) FROM pg_stat_activity
         WHERE datname = 'database' AND pid <> pg_backend_pid();"
       changed_when: false
 
     - name: Drop and recreate AdventureLog database
       ansible.builtin.command: >
-        docker exec adventurelog-db psql -U postgres
+        docker exec -u postgres adventurelog-db psql
         -c "DROP DATABASE IF EXISTS database;"
         -c "CREATE DATABASE database OWNER {{ adventurelog_db_user }};"
       changed_when: true
@@ -46,14 +46,14 @@
 
     - name: Terminate connections to Koillection database
       ansible.builtin.command: >
-        docker exec koillection-db psql -U postgres -c
+        docker exec -u postgres koillection-db psql -c
         "SELECT pg_terminate_backend(pid) FROM pg_stat_activity
         WHERE datname = 'koillection' AND pid <> pg_backend_pid();"
       changed_when: false
 
     - name: Drop and recreate Koillection database
       ansible.builtin.command: >
-        docker exec koillection-db psql -U postgres
+        docker exec -u postgres koillection-db psql
         -c "DROP DATABASE IF EXISTS koillection;"
         -c "CREATE DATABASE koillection OWNER koillection;"
       changed_when: true
