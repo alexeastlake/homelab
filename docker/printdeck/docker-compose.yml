@@ -1,0 +1,25 @@
+services:
+  printdeck:
+    # Pinned: bump this tag to deploy a new printdeck release (tags are cut in the printdeck repo; CI publishes them).
+    image: ghcr.io/alexeastlake/printdeck:v0.2.0
+    container_name: printdeck
+    ports:
+      - "8004:8000"
+    environment:
+      # First-boot admin bootstrap only; users.yaml is the source of truth after that.
+      - PRINTDECK_ADMIN_USERNAME=${PRINTDECK_ADMIN_USERNAME}
+      - PRINTDECK_ADMIN_PASSWORD=${PRINTDECK_ADMIN_PASSWORD}
+      # Caddy's IP, so the login rate limiter sees real client IPs.
+      - FORWARDED_ALLOW_IPS=${PRINTDECK_FORWARDED_ALLOW_IPS}
+    # Directory mount (not file mounts): saves are atomic temp+rename, which
+    # replaces the inode. Runs as uid 1000; dir is pre-created 0777 on NFS.
+    volumes:
+      - /srv/data/printdeck:/data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped

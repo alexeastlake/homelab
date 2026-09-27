@@ -30,7 +30,8 @@ Proxmox VE (laptop, 192.168.68.14 via WiFi)
     ├── Portainer       container management
     ├── Uptime Kuma     uptime monitoring
     ├── Homepage        dashboard (Caddy basic auth)
-    └── FileBrowser     web file manager
+    ├── FileBrowser     web file manager
+    └── PrintDeck       Moonraker/Klipper 3D printer dashboard
 ```
 
 ### Networking
@@ -161,6 +162,7 @@ ansible-playbook site.yml
 - **Uptime Kuma:** Create monitors and status pages via the UI. Config persists in `/srv/data/uptime-kuma/`.
 - **Portainer:** Generate an API key (My Account → Access tokens) and add it to the vault as `vault_portainer_api_key`. Used by the Homepage dashboard widget to display container stats.
 - **Homepage:** Proxmox API token must be created manually in the Proxmox UI (Datacenter → Permissions → API Tokens) and added to the vault. Protected by Caddy basic auth (credentials in vault).
+- **PrintDeck:** The admin account is bootstrapped from `vault_printdeck_admin_username` / `vault_printdeck_admin_password` on first start; after that `/srv/data/printdeck/users.yaml` is the source of truth. Add printers from the UI (**+**) using the printer's LAN IP (give it a DHCP reservation), not its `.local` mDNS name — the container can't resolve mDNS. The Docker host reaches printers on the home LAN through the WiFi NAT; the camera stream goes browser → printer directly, so it only works from the home LAN (the printer isn't in the WARP split tunnel).
 - **Caddy root CA:** The root CA cert/key are stored in Ansible vault and deployed by the caddy role. Install the root cert on your devices to trust internal HTTPS certs. The vault values must use YAML block scalar (`|`) to preserve PEM newlines.
 
 ## Secrets
