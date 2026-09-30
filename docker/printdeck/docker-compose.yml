@@ -1,7 +1,7 @@
 services:
   printdeck:
     # Pinned: bump this tag to deploy a new printdeck release (tags are cut in the printdeck repo; CI publishes them).
-    image: ghcr.io/alexeastlake/printdeck:v0.2.0
+    image: ghcr.io/alexeastlake/printdeck:v0.3.0
     container_name: printdeck
     ports:
       - "8004:8000"
